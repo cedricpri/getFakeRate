@@ -54,7 +54,7 @@ void nanoFakes::Begin(TTree * /*tree*/)
       puWeight = {fReader, "puWeight"};
     }
 
-  root_output = new TFile("results/results.root", "recreate");
+  root_output = new TFile("results/"+filename+".root", "recreate");
 
   TH1::SetDefaultSumw2();
 

@@ -18,9 +18,6 @@ void runNanoFakes(TString filename = "NONE")
       printf(" root -l -b -q \'runNanoFakes.C(\"DoubleEG_Run2017C-31Mar2018-v1__part0\")\'\n");
       printf(" root -l -b -q \'runNanoFakes.C(\"WJetsToLNu-LO__part0\")\'\n");
       printf(" root -l -b -q \'runNanoFakes.C(\"DYJetsToLL_M-50__part0\")\'\n");
-      printf(" ================================== OR ================================== \n");
-      printf(" root -l -b -q \'runNanoFakes.C(\"DoubleMuon\")\'\n");
-      printf(" root -l -b -q \'runNanoFakes.C(\"DoubleEG\")\'\n");
       printf("\n");
       
       return;
@@ -29,16 +26,7 @@ void runNanoFakes(TString filename = "NONE")
   TString path = (filename.Contains("Run2017")) ? path_data : path_mc;
 
   TChain* mychain = new TChain("Events", "Events");
-
-  /*if(filename == "DoubleMuon") {
-    mychain->Add(path + "nanoLatino_DoubleMuon_*.root");
-  } else if(filename == "DoubleEG") {
-    mychain->Add(path + "nanoLatino_DoubleEG_*.root");
-  } else {
-    mychain->Add(path + "nanoLatino_" + filename + ".root");
-    }*/
-
-  mychain->Add(path + "nanoLatino_" + filename + ".root");
+  mychain->Add(path + filename + ".root");
 
   printf("\nExecuting mychain->Process(\"nanoFakes.C+\")...\n\n");
 
