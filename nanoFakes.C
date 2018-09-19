@@ -29,7 +29,7 @@
 #include <TStyle.h>
 
 int nentries = 0;
-int maxentries = 1000;
+int maxentries = -1;
 
 TFile* root_output;
 TString filename;
@@ -195,6 +195,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
     passCuts &= (*nLepton == 1);
     passCuts &= (*mtw1 < 20.);
+    passCuts &= (*MET_pt < 20.);
 
     //Equivalent to getAwayJets function
     bool passJets = passCuts;
@@ -225,86 +226,8 @@ void nanoFakes::Terminate()
    // a query. It always runs on the client, it can be used to present
    // the results graphically or save the results to file.
 
-  printf("\n\n Writing histograms. This can take a while...");
+  printf("\n\n Writing histograms. This can take a while... \n \n");
 
-  /*//Muons
-  TCanvas* Muon_pt_loose = new TCanvas("Muon_pt_loose", "Muon_pt_loose2");
-  h_Muon_loose_pt_bin[3] -> SetTitle("Number of loose muons");
-  h_Muon_loose_pt_bin[3] -> SetXTitle("Muon pT [GeV]");
-  h_Muon_loose_pt_bin[3] -> Draw("ep");
-
-  TCanvas* Muon_pt_tight = new TCanvas("Muon_pt_tight", "Muon_pt_tight2");
-  h_Muon_loose_pt_bin[3] -> SetTitle("Number of tight muons");
-  h_Muon_loose_pt_bin[3] -> SetXTitle("Muon pT [GeV]");
-  h_Muon_tight_pt_bin[3] -> Draw("ep");
-
-  TCanvas* Muon_eta_loose = new TCanvas("Muon_eta_loose", "Muon_eta_loose2");
-  h_Muon_loose_eta_bin[3] -> SetTitle("Number of loose muons");
-  h_Muon_loose_eta_bin[3] -> SetXTitle("Muon |eta| [GeV]");
-  h_Muon_loose_eta_bin[3] -> Draw("ep");
-
-  TCanvas* Muon_eta_tight = new TCanvas("Muon_eta_tight", "Muon_eta_tight2");
-  h_Muon_loose_eta_bin[3] -> SetTitle("Number of tight muons");
-  h_Muon_loose_eta_bin[3] -> SetXTitle("Muon |eta| [GeV]");
-  h_Muon_tight_eta_bin[3] -> Draw("ep");
-
-  gStyle->SetOptStat(0);
-
-  TCanvas* Muon_pt_ratio = new TCanvas("Muon_pt_ratio", "Muon_pt_ratio2");  
-  TH1D* h_Muon_pt_ratio = (TH1D*)h_Muon_tight_pt_bin[3];
-  h_Muon_pt_ratio -> SetTitle("Ratio tight to loose");
-  h_Muon_pt_ratio -> SetXTitle("Muon pT [GeV]");
-  h_Muon_pt_ratio -> Divide(h_Muon_tight_pt_bin[3], h_Muon_loose_pt_bin[3], 1, 1, "B");
-  h_Muon_pt_ratio -> SetAxisRange(0, 1, "Y");
-  h_Muon_pt_ratio -> Draw("ep");
-
-  TCanvas* Muon_eta_ratio = new TCanvas("Muon_eta_ratio", "Muon_eta_ratio2");  
-  TH1D* h_Muon_eta_ratio = (TH1D*)h_Muon_tight_eta_bin[3];
-  h_Muon_eta_ratio -> SetTitle("Ratio tight to loose");
-  h_Muon_eta_ratio -> SetXTitle("Muon |eta| [GeV]");
-  h_Muon_eta_ratio -> Divide(h_Muon_tight_eta_bin[3], h_Muon_loose_eta_bin[3], 1, 1, "B");
-  h_Muon_eta_ratio -> SetAxisRange(0, 1, "Y");
-  h_Muon_eta_ratio -> Draw("ep");*/
-
-  //Electrons
-  /*TCanvas* Ele_pt_loose = new TCanvas("Ele_pt_loose", "Ele_pt_loose2");
-  h_Ele_loose_pt_bin[5] -> SetTitle("Number of loose ele");
-  h_Ele_loose_pt_bin[5] -> SetXTitle("Ele pT [GeV]");
-  h_Ele_loose_pt_bin[5] -> Draw("ep");
-
-  TCanvas* Ele_pt_tight = new TCanvas("Ele_pt_tight", "Ele_pt_tight2");
-  h_Ele_loose_pt_bin[5] -> SetTitle("Number of tight ele");
-  h_Ele_loose_pt_bin[5] -> SetXTitle("Ele pT [GeV]");
-  h_Ele_tight_pt_bin[5] -> Draw("ep");
-
-  TCanvas* Ele_eta_loose = new TCanvas("Ele_eta_loose", "Ele_eta_loose2");
-  h_Ele_loose_eta_bin[5] -> SetTitle("Number of loose ele");
-  h_Ele_loose_eta_bin[5] -> SetXTitle("Ele |eta| [GeV]");
-  h_Ele_loose_eta_bin[5] -> Draw("ep");
-
-  TCanvas* Ele_eta_tight = new TCanvas("Ele_eta_tight", "Ele_eta_tight2");
-  h_Ele_loose_eta_bin[5] -> SetTitle("Number of tight ele");
-  h_Ele_loose_eta_bin[5] -> SetXTitle("Ele |eta| [GeV]");
-  h_Ele_tight_eta_bin[5] -> Draw("ep");
-
-  gStyle->SetOptStat(0);
-
-  TCanvas* Ele_pt_ratio = new TCanvas("Ele_pt_ratio", "Ele_pt_ratio2");  
-  TH1D* h_Ele_pt_ratio = (TH1D*)h_Ele_tight_pt_bin[5];
-  h_Ele_pt_ratio -> SetTitle("Ratio tight to loose");
-  h_Ele_pt_ratio -> SetXTitle("Ele pT [GeV]");
-  h_Ele_pt_ratio -> Divide(h_Ele_tight_pt_bin[5], h_Ele_loose_pt_bin[5], 1, 1, "B");
-  h_Ele_pt_ratio -> SetAxisRange(0, 1, "Y");
-  h_Ele_pt_ratio -> Draw("ep");
-
-  TCanvas* Ele_eta_ratio = new TCanvas("Ele_eta_ratio", "Ele_eta_ratio2");  
-  TH1D* h_Ele_eta_ratio = (TH1D*)h_Ele_tight_eta_bin[5];
-  h_Ele_eta_ratio -> SetTitle("Ratio tight to loose");
-  h_Ele_eta_ratio -> SetXTitle("Ele |eta| [GeV]");
-  h_Ele_eta_ratio -> Divide(h_Ele_tight_eta_bin[5], h_Ele_loose_eta_bin[5], 1, 1, "B");
-  h_Ele_eta_ratio -> SetAxisRange(0, 1, "Y");
-  h_Ele_eta_ratio -> Draw("ep");*/
-  
   root_output->Write("", TObject::kOverwrite);
   root_output->Close();
 
@@ -330,35 +253,33 @@ void nanoFakes::FillAnalysisHistograms(int i)
   float lep1eta = fabs(Lepton_eta[0]);
 
   if (channel == m) {
-
+    
     h_Muon_loose_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
     h_Muon_loose_pt_bin    [i]->Fill(Lepton_pt[0],  event_weight);
     h_Muon_loose_eta_bin   [i]->Fill(lep1eta, event_weight);
-
+    
+    if (Lepton_isTightMuon_cut_Tight80x[0] > 0.5) {
+      h_Muon_tight_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
+      h_Muon_tight_pt_bin [i]->Fill(Lepton_pt[0],  event_weight);
+      h_Muon_tight_eta_bin[i]->Fill(lep1eta, event_weight);
+    }
+    
   } else if (channel == e) {
-
+    
     h_Ele_loose_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
     h_Ele_loose_pt_bin    [i]->Fill(Lepton_pt[0],  event_weight);
     h_Ele_loose_eta_bin   [i]->Fill(lep1eta, event_weight);
     
-  }
-
-  if(Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 || Lepton_isTightMuon_cut_Tight80x[0] > 0.5) {
+    if(Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5) {
       
-    if (channel == m) {
-
-      h_Muon_tight_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-      h_Muon_tight_pt_bin [i]->Fill(Lepton_pt[0],  event_weight);
-      h_Muon_tight_eta_bin[i]->Fill(lep1eta, event_weight);
-      
-    } else if (channel == e) {
-
       h_Ele_tight_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Ele_tight_pt_bin [i]->Fill(Lepton_pt[0],  event_weight);
       h_Ele_tight_eta_bin[i]->Fill(lep1eta, event_weight);
+      
     }
-  }
 
+  }
+    
 }
 
 /* 

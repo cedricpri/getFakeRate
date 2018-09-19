@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo $WORKDIRECTORY
+echo $SAMPLES
+
+cd $WORKDIRECTORY/
+
+eval `scramv1 runtime -sh`
+
+`cat $SAMPLES | grep "nanoLatino_" | grep -v "#" | awk -v line=$LSB_JOBINDEX '{ if (NR==line) print "root -l -b -q runNanoFakes.C(\""$1"\")" }'`
