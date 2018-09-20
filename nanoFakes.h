@@ -17,6 +17,7 @@
 #include <TTreeReaderArray.h>
 #include <TH1.h>
 #include <TH2.h>
+#include <TLorentzVector.h>
 
 // Headers needed by this particular selector
 
@@ -49,31 +50,66 @@ const Double_t ptbins[nptbin+1] = {10, 15, 20, 25, 30, 35, 40, 45, 50};
 const int netabin = 5;
 const Double_t etabins[netabin+1] = {0, 0.5, 1.0, 1.5, 2.0, 2.5};
 
+//Z candidate
+int Zlepton1type;
+int Zlepton2type;
+float Zlepton1idisoW;
+float Zlepton2idisoW;
+int Zdecayflavour;
+float m2l;
+
+enum {Loose, Tight};
+
+enum {
+  FR_00_QCD,
+  FR_01_Zpeak,
+  ncut
+};
+
+const TString scut[ncut] = {
+  "FR/00_QCD",
+  "FR/01_Zpeak",
+};
+
 class nanoFakes : public TSelector {
 public :
    TTreeReader     fReader;  //!the tree reader
    TTree          *fChain = 0;   //!pointer to the analyzed TTree or TChain
 
-   void FillAnalysisHistograms(int     i);
+   void FillAnalysisHistograms(int icut,
+			       int     i);
 
-   void FillLevelHistograms   (int     i,
+   void FillLevelHistograms   (int icut,
+			       int     i,
 			       bool    pass);
 
    //Our histograms 
-   TH2D* h_Muon_loose_pt_eta_bin[njetet];
-   TH2D* h_Muon_tight_pt_eta_bin[njetet];
-   TH2D* h_Ele_loose_pt_eta_bin [njetet];
-   TH2D* h_Ele_tight_pt_eta_bin [njetet];
+   TH2D* h_Muon_loose_pt_eta_bin[ncut][njetet];
+   TH2D* h_Muon_tight_pt_eta_bin[ncut][njetet];
+   TH2D* h_Ele_loose_pt_eta_bin [ncut][njetet];
+   TH2D* h_Ele_tight_pt_eta_bin [ncut][njetet];
 
-   TH1D* h_Muon_loose_pt_bin[njetet];
-   TH1D* h_Muon_tight_pt_bin[njetet];
-   TH1D* h_Ele_loose_pt_bin [njetet];
-   TH1D* h_Ele_tight_pt_bin [njetet];
+   TH1D* h_Muon_loose_pt_bin[ncut][njetet];
+   TH1D* h_Muon_tight_pt_bin[ncut][njetet];
+   TH1D* h_Ele_loose_pt_bin [ncut][njetet];
+   TH1D* h_Ele_tight_pt_bin [ncut][njetet];
 
-   TH1D* h_Muon_loose_eta_bin[njetet];
-   TH1D* h_Muon_tight_eta_bin[njetet];
-   TH1D* h_Ele_loose_eta_bin [njetet];
-   TH1D* h_Ele_tight_eta_bin [njetet];
+   TH1D* h_Muon_loose_eta_bin[ncut][njetet];
+   TH1D* h_Muon_tight_eta_bin[ncut][njetet];
+   TH1D* h_Ele_loose_eta_bin [ncut][njetet];
+   TH1D* h_Ele_tight_eta_bin [ncut][njetet];
+
+   TH1D* h_Muon_loose_m2l[ncut][njetet];
+   TH1D* h_Muon_tight_m2l[ncut][njetet];
+   TH1D* h_Ele_loose_m2l [ncut][njetet];
+   TH1D* h_Ele_tight_m2l [ncut][njetet];
+
+   // Declare effective luminosity estimation histograms
+   //----------------------------------------------------------------------------
+   TH2D* h_Muon_loose_pt_m2l[ncut][njetet];
+   TH2D* h_Muon_tight_pt_m2l[ncut][njetet];
+   TH2D* h_Ele_loose_pt_m2l [ncut][njetet];
+   TH2D* h_Ele_tight_pt_m2l [ncut][njetet];
 
    // Readers to access the data (delete the ones you do not need).
    //#ifdef IS_MC
@@ -91,6 +127,7 @@ public :
    TTreeReaderArray<Int_t> Lepton_pdgId = {fReader, "Lepton_pdgId"};
    TTreeReaderArray<Float_t> Lepton_pt = {fReader, "Lepton_pt"};
    TTreeReaderArray<Float_t> Lepton_eta = {fReader, "Lepton_eta"};
+   TTreeReaderArray<Float_t> Lepton_phi = {fReader, "Lepton_phi"};
    TTreeReaderArray<Int_t> Lepton_electronIdx = {fReader, "Lepton_electronIdx"};
 
    TTreeReaderValue<UInt_t> nCleanJet = {fReader, "nCleanJet"};

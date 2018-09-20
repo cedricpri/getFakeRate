@@ -14,10 +14,10 @@ void runNanoFakes(TString filename = "NONE")
   if (filename.EqualTo("NONE"))
     {
       printf("\n Examples\n\n");
-      printf(" root -l -b -q \'runNanoFakes.C(\"DoubleMuon_Run2017C-31Mar2018-v1__part0\")\'\n");
-      printf(" root -l -b -q \'runNanoFakes.C(\"DoubleEG_Run2017C-31Mar2018-v1__part0\")\'\n");
-      printf(" root -l -b -q \'runNanoFakes.C(\"WJetsToLNu-LO__part0\")\'\n");
-      printf(" root -l -b -q \'runNanoFakes.C(\"DYJetsToLL_M-50__part0\")\'\n");
+      printf(" root -l -b -q \'runNanoFakes.C(\"nanoLatino_DoubleMuon_Run2017C-31Mar2018-v1__part0\")\'\n");
+      printf(" root -l -b -q \'runNanoFakes.C(\"nanoLatino_DoubleEG_Run2017C-31Mar2018-v1__part0\")\'\n");
+      printf(" root -l -b -q \'runNanoFakes.C(\"nanoLatino_WJetsToLNu-LO__part0\")\'\n");
+      printf(" root -l -b -q \'runNanoFakes.C(\"nanoLatino_DYJetsToLL_M-50__part0\")\'\n");
       printf("\n");
       
       return;

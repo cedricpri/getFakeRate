@@ -40,7 +40,11 @@ float inputJetEt;
 float leptonPtMin;
 float leptonEtaMax;
 float event_weight;
+float l2tight_weight;
 float deltaR;
+
+TLorentzVector tlv1;
+TLorentzVector tlv2;
 
 void nanoFakes::Begin(TTree * /*tree*/)
 {
@@ -65,27 +69,47 @@ void nanoFakes::Begin(TTree * /*tree*/)
   //filename = GetOption();
   //ismc = (filename.Contains("Run2017")) ? false : true;
 
-   for (int i=0; i<njetet; i++) {
+   for (int i=0; i<ncut; i++) {
+     
+     TString directory = scut[i];
+     root_output -> cd();
+     gDirectory -> mkdir(directory);
+     root_output -> cd(directory);
 
-     TString muonsuffix = Form("_%.0fGeV", muonjetet[i]);
-     TString elesuffix = Form("_%.0fGeV", elejetet[i]);
-     
-     //Histograms definition for all the variables considered
-     h_Muon_loose_pt_eta_bin[i] = new TH2D("h_Muon_loose_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
-     h_Muon_tight_pt_eta_bin[i] = new TH2D("h_Muon_tight_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
-     h_Ele_loose_pt_eta_bin [i] = new TH2D("h_Ele_loose_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
-     h_Ele_tight_pt_eta_bin [i] = new TH2D("h_Ele_tight_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
-     
-     h_Muon_loose_pt_bin[i] = new TH1D("h_Muon_loose_pt_bin" + muonsuffix, "", nptbin, ptbins);
-     h_Muon_tight_pt_bin[i] = new TH1D("h_Muon_tight_pt_bin" + muonsuffix, "", nptbin, ptbins);
-     h_Ele_loose_pt_bin [i] = new TH1D("h_Ele_loose_pt_bin"  + elesuffix,  "", nptbin, ptbins);
-     h_Ele_tight_pt_bin [i] = new TH1D("h_Ele_tight_pt_bin"  + elesuffix,  "", nptbin, ptbins);
-     
-     h_Muon_loose_eta_bin[i] = new TH1D("h_Muon_loose_eta_bin" + muonsuffix, "", netabin, etabins);
-     h_Muon_tight_eta_bin[i] = new TH1D("h_Muon_tight_eta_bin" + muonsuffix, "", netabin, etabins);
-     h_Ele_loose_eta_bin [i] = new TH1D("h_Ele_loose_eta_bin"  + elesuffix,  "", netabin, etabins);
-     h_Ele_tight_eta_bin [i] = new TH1D("h_Ele_tight_eta_bin"  + elesuffix,  "", netabin, etabins);
-
+     for (int j=0; j<njetet; j++) {
+       
+       TString muonsuffix = Form("_%.0fGeV", muonjetet[j]);
+       TString elesuffix = Form("_%.0fGeV", elejetet[j]);
+       
+       //Histograms definition for all the variables considered
+       h_Muon_loose_pt_eta_bin[i][j] = new TH2D("h_Muon_loose_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
+       h_Muon_tight_pt_eta_bin[i][j] = new TH2D("h_Muon_tight_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
+       h_Ele_loose_pt_eta_bin [i][j] = new TH2D("h_Ele_loose_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
+       h_Ele_tight_pt_eta_bin [i][j] = new TH2D("h_Ele_tight_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
+       
+       h_Muon_loose_pt_bin[i][j] = new TH1D("h_Muon_loose_pt_bin" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_tight_pt_bin[i][j] = new TH1D("h_Muon_tight_pt_bin" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_loose_pt_bin [i][j] = new TH1D("h_Ele_loose_pt_bin"  + elesuffix,  "", nptbin, ptbins);
+       h_Ele_tight_pt_bin [i][j] = new TH1D("h_Ele_tight_pt_bin"  + elesuffix,  "", nptbin, ptbins);
+       
+       h_Muon_loose_eta_bin[i][j] = new TH1D("h_Muon_loose_eta_bin" + muonsuffix, "", netabin, etabins);
+       h_Muon_tight_eta_bin[i][j] = new TH1D("h_Muon_tight_eta_bin" + muonsuffix, "", netabin, etabins);
+       h_Ele_loose_eta_bin [i][j] = new TH1D("h_Ele_loose_eta_bin"  + elesuffix,  "", netabin, etabins);
+       h_Ele_tight_eta_bin [i][j] = new TH1D("h_Ele_tight_eta_bin"  + elesuffix,  "", netabin, etabins);
+       
+       h_Muon_loose_m2l[i][j] = new TH1D("h_Muon_loose_m2l" + muonsuffix, "", 1000, 0, 200);
+       h_Muon_tight_m2l[i][j] = new TH1D("h_Muon_tight_m2l" + muonsuffix, "", 1000, 0, 200);
+       h_Ele_loose_m2l [i][j] = new TH1D("h_Ele_loose_m2l"  + elesuffix,  "", 1000, 0, 200);
+       h_Ele_tight_m2l [i][j] = new TH1D("h_Ele_tight_m2l"  + elesuffix,  "", 1000, 0, 200);
+          
+       // Define effective luminosity estimation histograms
+       //------------------------------------------------------------------------
+       h_Muon_loose_pt_m2l[i][j] = new TH2D("h_Muon_loose_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+       h_Muon_tight_pt_m2l[i][j] = new TH2D("h_Muon_tight_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+       h_Ele_loose_pt_m2l [i][j] = new TH2D("h_Ele_loose_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+       h_Ele_tight_pt_m2l [i][j] = new TH2D("h_Ele_tight_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+       
+     }
    }
 
 }
@@ -131,15 +155,85 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
   if (Lepton_pt[0] < leptonPtMin) return 0;
   if (fabs(Lepton_eta[0]) > leptonEtaMax) return 0;
+
+  filename = GetOption();
+  ismc = (filename.Contains("Run2017")) ? false : true;
   
   event_weight = 1.0;
+
+  //Make Z candidate
+  //------------------------------------------------------------------------  
+  Zlepton1type = Loose;
+  Zlepton2type = Loose;
+  Zlepton1idisoW = 1.0;
+  Zlepton2idisoW = 1.0;
+
+  m2l = -999.0;
+
+  if(*nLepton >= 2) {
+
+    for(unsigned int iLep1 = 0; iLep1 < *nLepton; iLep1++) {
+      
+      if(Lepton_pt[iLep1] < 10.) continue;
+
+      for(unsigned int iLep2 = 0; iLep2 < *nLepton; iLep2++) {
+	
+	if(Lepton_pt[iLep2] < 10.) continue;
+	if(Lepton_pdgId[iLep1] + Lepton_pdgId[iLep2] != 0) continue;
+
+	float mass1 = (abs(Lepton_pdgId[iLep1]) == 11) ? 0.000511 : 0.106;
+	float mass2 = (abs(Lepton_pdgId[iLep2]) == 11) ? 0.000511 : 0.106;
+
+	tlv1.SetPtEtaPhiM(Lepton_pt[iLep1], Lepton_eta[iLep1], Lepton_phi[iLep1], mass1);
+	tlv2.SetPtEtaPhiM(Lepton_pt[iLep2], Lepton_eta[iLep2], Lepton_phi[iLep2], mass2);
+
+	float inv_mass = (tlv1 + tlv2).M();
+
+	if(m2l < 0 || fabs(inv_mass - 91.188) < fabs(m2l - 91.188)) {
+	  
+	  m2l = inv_mass;
+
+	  //Is the first lepton tight?
+	  if(abs(Lepton_pdgId[iLep1]) == 11 && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[iLep1]] > 0.5) {
+	    
+	    Zlepton1type = Tight;
+	    Zdecayflavour = 11;
+	    if(ismc) Zlepton1idisoW = 1.0; //Temporary value until put in the trees
+
+	  } else if(abs(Lepton_pdgId[iLep1]) == 13 && Lepton_isTightMuon_cut_Tight80x[iLep1] > 0.5) {
+	  
+	    Zlepton1type = Tight;
+	    Zdecayflavour = 13;
+	    if(ismc) Zlepton1idisoW = 1.0; //Temporary value until put in the trees
+
+	  }
+
+	  //Is the second lepton tight?
+	  if(abs(Lepton_pdgId[iLep2]) == 11 && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[iLep2]] > 0.5) {
+	    
+	    Zlepton2type = Tight;
+	    if(ismc) Zlepton2idisoW = 1.0; //Temporary value until put in the trees
+
+	  } else if(abs(Lepton_pdgId[iLep2]) == 13 && Lepton_isTightMuon_cut_Tight80x[iLep2] > 0.5) {
+	  
+	    Zlepton2type = Tight;
+	    if(ismc) Zlepton2idisoW = 1.0; //Temporary value until put in the trees
+
+	  }
+
+	}
+
+      }
+
+    }
+
+  }
+
+  l2tight_weight = Zlepton1idisoW * Zlepton2idisoW;
 
   // Get the event weight
   //------------------------------------------------------------------------
   bool passTrigger = false;
-
-  filename = GetOption();
-  ismc = (filename.Contains("Run2017")) ? false : true;
 
   if(ismc) {
     
@@ -196,16 +290,80 @@ Bool_t nanoFakes::Process(Long64_t entry)
     passCuts &= (*nLepton == 1);
     passCuts &= (*mtw1 < 20.);
     passCuts &= (*MET_pt < 20.);
-
+    
     //Equivalent to getAwayJets function
-    bool passJets = passCuts;
+    bool passJets = false;
     
     deltaR = sqrt((*dphilep1jet1**dphilep1jet1)+(CleanJet_eta[0]*CleanJet_eta[0]));
 
-    passJets &= (*nCleanJet > 1); 
+    passJets = (*nCleanJet > 1); 
     passJets &= (deltaR > 1 && CleanJet_pt[0] >= inputJetEt);
 
-    FillLevelHistograms(i, passJets);
+    //QCD region
+    if(passJets && passCuts) {
+
+      if (fabs(Zdecayflavour) == 11) {
+	
+	h_Ele_loose_m2l   [FR_00_QCD][i]->Fill(m2l, event_weight);
+	h_Ele_loose_pt_m2l[FR_00_QCD][i]->Fill(m2l, tlv1.Pt(), event_weight);
+      
+	if (Zlepton1type == Tight && Zlepton2type == Tight) {
+        
+	  h_Ele_tight_m2l   [FR_00_QCD][i]->Fill(m2l, event_weight * l2tight_weight);
+	  h_Ele_tight_pt_m2l[FR_00_QCD][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	}
+      }
+      else if (fabs(Zdecayflavour) == 13) {
+      
+	h_Muon_loose_m2l   [FR_00_QCD][i]->Fill(m2l, event_weight);
+	h_Muon_loose_pt_m2l[FR_00_QCD][i]->Fill(m2l, tlv1.Pt(), event_weight);
+      
+	if (Zlepton1type == Tight && Zlepton2type == Tight) {
+        
+	  h_Muon_tight_m2l   [FR_00_QCD][i]->Fill(m2l, event_weight * l2tight_weight);
+	  h_Muon_tight_pt_m2l[FR_00_QCD][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	}
+      }
+
+    }
+    
+    FillLevelHistograms(FR_00_QCD, i, passJets && passCuts);
+
+    //Z Region
+    passCuts = passTrigger;
+
+    passCuts &= (*nLepton > 1);
+    passCuts &= (*MET_pt < 20.);
+    passCuts &= (m2l > 20.);
+
+    if(passJets && passCuts) {
+      
+      if (fabs(Zdecayflavour) == 11) {
+	
+	h_Ele_loose_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight);
+	h_Ele_loose_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight);
+      
+	if (Zlepton1type == Tight && Zlepton2type == Tight) {
+        
+	  h_Ele_tight_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight * l2tight_weight);
+	  h_Ele_tight_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	}
+      }
+      else if (fabs(Zdecayflavour) == 13) {
+      
+	h_Muon_loose_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight);
+	h_Muon_loose_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight);
+      
+	if (Zlepton1type == Tight && Zlepton2type == Tight) {
+        
+	  h_Muon_tight_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight * l2tight_weight);
+	  h_Muon_tight_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	}
+      }
+
+    }
+
+    FillLevelHistograms(FR_01_Zpeak, i, passJets && passCuts);
 
   }
 
@@ -236,45 +394,45 @@ void nanoFakes::Terminate()
 //------------------------------------------------------------------------------
 // FillLevelHistograms
 //------------------------------------------------------------------------------
-void nanoFakes::FillLevelHistograms(int i, bool pass)
+void nanoFakes::FillLevelHistograms(int icut, int i, bool pass)
 {
   if (!pass) return;
 
-  FillAnalysisHistograms(i);
+  FillAnalysisHistograms(icut, i);
 }
 
 
 //------------------------------------------------------------------------------   
 // FillanalysisHistograms
 //------------------------------------------------------------------------------                 
-void nanoFakes::FillAnalysisHistograms(int i)
+void nanoFakes::FillAnalysisHistograms(int icut, int i)
 {
 
   float lep1eta = fabs(Lepton_eta[0]);
 
   if (channel == m) {
     
-    h_Muon_loose_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-    h_Muon_loose_pt_bin    [i]->Fill(Lepton_pt[0],  event_weight);
-    h_Muon_loose_eta_bin   [i]->Fill(lep1eta, event_weight);
+    h_Muon_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
+    h_Muon_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
+    h_Muon_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
     
     if (Lepton_isTightMuon_cut_Tight80x[0] > 0.5) {
-      h_Muon_tight_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-      h_Muon_tight_pt_bin [i]->Fill(Lepton_pt[0],  event_weight);
-      h_Muon_tight_eta_bin[i]->Fill(lep1eta, event_weight);
+      h_Muon_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
+      h_Muon_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
+      h_Muon_tight_eta_bin[icut][i]->Fill(lep1eta, event_weight);
     }
     
   } else if (channel == e) {
     
-    h_Ele_loose_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-    h_Ele_loose_pt_bin    [i]->Fill(Lepton_pt[0],  event_weight);
-    h_Ele_loose_eta_bin   [i]->Fill(lep1eta, event_weight);
+    h_Ele_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
+    h_Ele_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
+    h_Ele_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
     
     if(Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5) {
       
-      h_Ele_tight_pt_eta_bin[i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-      h_Ele_tight_pt_bin [i]->Fill(Lepton_pt[0],  event_weight);
-      h_Ele_tight_eta_bin[i]->Fill(lep1eta, event_weight);
+      h_Ele_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
+      h_Ele_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
+      h_Ele_tight_eta_bin[icut][i]->Fill(lep1eta, event_weight);
       
     }
 
