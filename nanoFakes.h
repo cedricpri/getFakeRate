@@ -63,12 +63,21 @@ enum {Loose, Tight};
 enum {
   FR_00_QCD,
   FR_01_Zpeak,
-  ncut
+  ncutFR
 };
 
-const TString scut[ncut] = {
+const TString scutFR[ncutFR] = {
   "FR/00_QCD",
   "FR/01_Zpeak",
+};
+
+enum {
+  PR_00,
+  ncutPR
+};
+
+const TString scutPR[ncutPR] = {
+  "PR/00",
 };
 
 class nanoFakes : public TSelector {
@@ -83,39 +92,58 @@ public :
 			       int     i,
 			       bool    pass);
 
-   //Our histograms 
-   TH2D* h_Muon_loose_pt_eta_bin[ncut][njetet];
-   TH2D* h_Muon_tight_pt_eta_bin[ncut][njetet];
-   TH2D* h_Ele_loose_pt_eta_bin [ncut][njetet];
-   TH2D* h_Ele_tight_pt_eta_bin [ncut][njetet];
+   // Fake rate histograms 
+   //----------------------------------------------------------------------------
+   TH2D* h_Muon_loose_pt_eta_bin[ncutFR][njetet];
+   TH2D* h_Muon_tight_pt_eta_bin[ncutFR][njetet];
+   TH2D* h_Ele_loose_pt_eta_bin [ncutFR][njetet];
+   TH2D* h_Ele_tight_pt_eta_bin [ncutFR][njetet];
 
-   TH1D* h_Muon_loose_pt_bin[ncut][njetet];
-   TH1D* h_Muon_tight_pt_bin[ncut][njetet];
-   TH1D* h_Ele_loose_pt_bin [ncut][njetet];
-   TH1D* h_Ele_tight_pt_bin [ncut][njetet];
+   TH1D* h_Muon_loose_pt_bin[ncutFR][njetet];
+   TH1D* h_Muon_tight_pt_bin[ncutFR][njetet];
+   TH1D* h_Ele_loose_pt_bin [ncutFR][njetet];
+   TH1D* h_Ele_tight_pt_bin [ncutFR][njetet];
 
-   TH1D* h_Muon_loose_eta_bin[ncut][njetet];
-   TH1D* h_Muon_tight_eta_bin[ncut][njetet];
-   TH1D* h_Ele_loose_eta_bin [ncut][njetet];
-   TH1D* h_Ele_tight_eta_bin [ncut][njetet];
+   TH1D* h_Muon_loose_eta_bin[ncutFR][njetet];
+   TH1D* h_Muon_tight_eta_bin[ncutFR][njetet];
+   TH1D* h_Ele_loose_eta_bin [ncutFR][njetet];
+   TH1D* h_Ele_tight_eta_bin [ncutFR][njetet];
 
-   TH1D* h_Muon_loose_m2l[ncut][njetet];
-   TH1D* h_Muon_tight_m2l[ncut][njetet];
-   TH1D* h_Ele_loose_m2l [ncut][njetet];
-   TH1D* h_Ele_tight_m2l [ncut][njetet];
+   TH1D* h_Muon_loose_m2l[ncutFR][njetet];
+   TH1D* h_Muon_tight_m2l[ncutFR][njetet];
+   TH1D* h_Ele_loose_m2l [ncutFR][njetet];
+   TH1D* h_Ele_tight_m2l [ncutFR][njetet];
 
    // Declare effective luminosity estimation histograms
    //----------------------------------------------------------------------------
-   TH2D* h_Muon_loose_pt_m2l[ncut][njetet];
-   TH2D* h_Muon_tight_pt_m2l[ncut][njetet];
-   TH2D* h_Ele_loose_pt_m2l [ncut][njetet];
-   TH2D* h_Ele_tight_pt_m2l [ncut][njetet];
+   TH2D* h_Muon_loose_pt_m2l[ncutFR][njetet];
+   TH2D* h_Muon_tight_pt_m2l[ncutFR][njetet];
+   TH2D* h_Ele_loose_pt_m2l [ncutFR][njetet];
+   TH2D* h_Ele_tight_pt_m2l [ncutFR][njetet];
+
+   // Prompt rate histograms
+   //--------------------------------------------------------------------------
+   TH2D* h_Muon_loose_pt_eta_PR[ncutPR];
+   TH2D* h_Muon_tight_pt_eta_PR[ncutPR];
+   TH2D* h_Ele_loose_pt_eta_PR[ncutPR];
+   TH2D* h_Ele_tight_pt_eta_PR[ncutPR];
+
+   TH1D* h_Muon_loose_pt_PR[ncutPR];
+   TH1D* h_Muon_tight_pt_PR[ncutPR];
+   TH1D* h_Ele_loose_pt_PR[ncutPR];
+   TH1D* h_Ele_tight_pt_PR[ncutPR];
+
+   TH1D* h_Muon_loose_eta_PR[ncutPR];
+   TH1D* h_Muon_tight_eta_PR[ncutPR];
+   TH1D* h_Ele_loose_eta_PR[ncutPR];
+   TH1D* h_Ele_tight_eta_PR[ncutPR];
 
    // Readers to access the data (delete the ones you do not need).
    //#ifdef IS_MC
    TTreeReaderValue<Float_t> baseW;
    TTreeReaderValue<Float_t> Xsec;
    TTreeReaderValue<Float_t> puWeight;
+   TTreeReaderValue<Float_t> genWeight;
    //#endif
 
    TTreeReaderValue<Bool_t> HLT_Mu8_TrkIsoVVL = {fReader, "HLT_Mu8_TrkIsoVVL"};
@@ -158,6 +186,8 @@ public :
    TTreeReaderArray<Bool_t> Electron_mvaFall17noIso_WP80 = {fReader, "Electron_mvaFall17noIso_WP80"};
    TTreeReaderArray<Bool_t> Electron_mvaFall17noIso_WP90 = {fReader, "Electron_mvaFall17noIso_WP90"};
    TTreeReaderArray<Bool_t> Electron_mvaFall17noIso_WPL = {fReader, "Electron_mvaFall17noIso_WPL"};
+   TTreeReaderArray<Float_t> Electron_dxy = {fReader, "Electron_dxy"};
+   TTreeReaderArray<Float_t> Electron_dz = {fReader, "Electron_dz"};
 
    nanoFakes(TTree * /*tree*/ =0) { }
    virtual ~nanoFakes() { }
