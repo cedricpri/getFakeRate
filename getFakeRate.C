@@ -12,8 +12,8 @@ const Float_t elescale = -1.;
 
 // Data members
 //------------------------------------------------------------------------------
-bool    drawone      = true;
-bool    drawall      = false;
+bool    drawone      = false;
+bool    drawall      = true;
 bool    savepng      = true;
 bool    setgrid      = true;
 bool    Wsubtraction = true;
@@ -75,7 +75,7 @@ TLegend* DrawLegend(Float_t     x1,
 //
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void getFakeRate(TString inputdir_name  = "results/",
-		 TString outputdir_name = "output/")
+		 TString outputdir_name = "fakerate/")
 {
   inputdir  = inputdir_name;
   outputdir = outputdir_name;
@@ -93,7 +93,7 @@ void getFakeRate(TString inputdir_name  = "results/",
 
   // Prompt rate
   //----------------------------------------------------------------------------
-  /*WritePR("Ele");
+  WritePR("Ele");
   WritePR("Muon");
 
   if (drawone || drawall)
@@ -102,7 +102,7 @@ void getFakeRate(TString inputdir_name  = "results/",
       DrawPR("Muon", "pt",  "p_{T} [GeV]");
       DrawPR("Ele",  "eta", "|#eta|");
       DrawPR("Muon", "eta", "|#eta|");
-      }*/
+      }
 
 
   // Fake rate
@@ -118,7 +118,7 @@ void getFakeRate(TString inputdir_name  = "results/",
     WriteFR("Ele",  elescale, elejetet);
     WriteFR("Muon", muoscale, muojetet);
 
-    if(drawone && i == 5) { //We are mostly interested in Jetet > 35 GeV for electrons
+    if(drawone && i == 3) { //We are mostly interested in Jetet > 25 GeV for electrons
       DrawFR("Ele",  "pt",  "p_{T} [GeV]", elescale, elejetet);
       DrawFR("Ele",  "eta", "|#eta|",      elescale, elejetet);
     }
@@ -154,12 +154,12 @@ void DrawFR(TString flavour,
 
   // Read loose and tight histograms
   //----------------------------------------------------------------------------
-  TH1D* h_loose_data  = (TH1D*)dataFR ->Get("h_" + flavour + "_loose_" + suffix);
-  TH1D* h_loose_zjets = (TH1D*)zjetsFR->Get("h_" + flavour + "_loose_" + suffix);
-  TH1D* h_loose_wjets = (TH1D*)wjetsFR->Get("h_" + flavour + "_loose_" + suffix);
-  TH1D* h_tight_data  = (TH1D*)dataFR ->Get("h_" + flavour + "_tight_" + suffix);
-  TH1D* h_tight_zjets = (TH1D*)zjetsFR->Get("h_" + flavour + "_tight_" + suffix);
-  TH1D* h_tight_wjets = (TH1D*)wjetsFR->Get("h_" + flavour + "_tight_" + suffix);
+  TH1D* h_loose_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH1D* h_loose_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH1D* h_loose_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH1D* h_tight_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH1D* h_tight_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH1D* h_tight_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
 
 
   // Make EWK correction histograms
@@ -209,7 +209,7 @@ void DrawFR(TString flavour,
   Cosmetics(h_FR,     "ep",      xtitle, title1, kBlack);
   Cosmetics(h_FR_EWK, "ep,same", xtitle, title1, kRed+1);
 
-  DrawLatex(42, 0.940, 0.945, 0.045, 31, "35.9 fb^{-1} (13 TeV)");
+  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.2 fb^{-1} (13 TeV)");
 
   DrawLegend(0.22, 0.845, h_FR,     "Without EWK correction");
   DrawLegend(0.22, 0.800, h_FR_EWK, "With EWK correction");
@@ -226,7 +226,7 @@ void DrawFR(TString flavour,
 
   Cosmetics(h_EWKrel_tight, "ep", xtitle, title2, kBlack);
 
-  DrawLatex(42, 0.940, 0.945, 0.045, 31, "35.9 fb^{-1} (13 TeV)");
+  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.2 fb^{-1} (13 TeV)");
 
 
   // Draw loose EWK correction
@@ -240,7 +240,7 @@ void DrawFR(TString flavour,
 
   Cosmetics(h_EWKrel_loose, "ep", xtitle, title3, kBlack);
 
-  DrawLatex(42, 0.940, 0.945, 0.045, 31, "35.9 fb^{-1} (13 TeV)");
+  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.2 fb^{-1} (13 TeV)");
 
 
   // Save
@@ -258,8 +258,8 @@ void DrawPR(TString flavour,
 	    TString variable,
 	    TString xtitle)
 {
-  TH1D* h_loose_zjets = (TH1D*)zjetsPR -> Get("h_" + flavour + "_loose_" + variable + "_PR");
-  TH1D* h_tight_zjets = (TH1D*)zjetsPR -> Get("h_" + flavour + "_tight_" + variable + "_PR");
+  TH1D* h_loose_zjets = (TH1D*)zjetsPR -> Get("PR/00/h_" + flavour + "_loose_" + variable + "_PR");
+  TH1D* h_tight_zjets = (TH1D*)zjetsPR -> Get("PR/00/h_" + flavour + "_tight_" + variable + "_PR");
 
   TH1D* h_PR = (TH1D*)h_tight_zjets->Clone("h_" + flavour + "_PR_" + variable);
       
@@ -296,12 +296,12 @@ void WriteFR(TString flavour,
   
   // Read loose and tight histograms
   //----------------------------------------------------------------------------
-  TH2D* h_loose_data  = (TH2D*)dataFR ->Get("h_" + flavour + "_loose_" + suffix);
-  TH2D* h_loose_zjets = (TH2D*)zjetsFR->Get("h_" + flavour + "_loose_" + suffix);
-  TH2D* h_loose_wjets = (TH2D*)wjetsFR->Get("h_" + flavour + "_loose_" + suffix);
-  TH2D* h_tight_data  = (TH2D*)dataFR ->Get("h_" + flavour + "_tight_" + suffix);
-  TH2D* h_tight_zjets = (TH2D*)zjetsFR->Get("h_" + flavour + "_tight_" + suffix);
-  TH2D* h_tight_wjets = (TH2D*)wjetsFR->Get("h_" + flavour + "_tight_" + suffix);
+  TH2D* h_loose_data  = (TH2D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH2D* h_loose_zjets = (TH2D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH2D* h_loose_wjets = (TH2D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH2D* h_tight_data  = (TH2D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH2D* h_tight_zjets = (TH2D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH2D* h_tight_wjets = (TH2D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
 
 
   // Prepare fake rate histograms
@@ -352,8 +352,8 @@ void WriteFR(TString flavour,
 //------------------------------------------------------------------------------
 void WritePR(TString flavour)
 {
-  TH2D* h_loose_zjets = (TH2D*)zjetsPR->Get("h_" + flavour + "_loose_pt_eta_PR");
-  TH2D* h_tight_zjets = (TH2D*)zjetsPR->Get("h_" + flavour + "_tight_pt_eta_PR");
+  TH2D* h_loose_zjets = (TH2D*)zjetsPR->Get("PR/00/h_" + flavour + "_loose_pt_eta_PR");
+  TH2D* h_tight_zjets = (TH2D*)zjetsPR->Get("PR/00/h_" + flavour + "_tight_pt_eta_PR");
 
   TH2D* h_PR = (TH2D*)h_tight_zjets->Clone("h_" + flavour + "_signal_pt_eta_bin");
 

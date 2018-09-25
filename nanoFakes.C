@@ -47,6 +47,13 @@ float dxycut;
 TLorentzVector tlv1;
 TLorentzVector tlv2;
 
+int jetIndex;
+
+int nElectronsLoose = 0;
+int nElectronsTight = 0;
+int nMuonsLoose = 0;
+int nMuonsTight = 0;
+
 void nanoFakes::Begin(TTree * /*tree*/)
 {
 
@@ -57,7 +64,7 @@ void nanoFakes::Begin(TTree * /*tree*/)
       baseW = {fReader, "baseW"};
       Xsec = {fReader, "Xsec"};
       puWeight = {fReader, "puWeight"};
-      genWeight = {fReader, "genWeight"};
+      Generator_weight = {fReader, "Generator_weight"};
     }
 
   root_output = new TFile("results/"+filename+".root", "recreate");
@@ -179,7 +186,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
   channel = (abs(Lepton_pdgId[0]) == 11) ? e : m;
 
   leptonPtMin  = (channel == e) ?  13 :  10;
-  leptonEtaMax = (channel == m) ? 2.5 : 2.4;
+  leptonEtaMax = (channel == e) ? 2.5 : 2.4;
 
   if (Lepton_pt[0] < leptonPtMin) return 0;
   if (fabs(Lepton_eta[0]) > leptonEtaMax) return 0;
@@ -270,7 +277,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
   if(ismc) {
     
     passTrigger = true;
-    event_weight = (*baseW/1000.0) * (*puWeight) * (*genWeight);
+    event_weight = (*baseW/1000.0) * (*puWeight) * (*Generator_weight);
 
     if(channel == m){
       (Lepton_pt[0] <= 20.) ? event_weight *= 2.903 : event_weight *= 65.944;
@@ -327,10 +334,27 @@ Bool_t nanoFakes::Process(Long64_t entry)
     //Equivalent to getAwayJets function
     bool passJets = false;
     
-    deltaR = sqrt((*dphilep1jet1**dphilep1jet1)+(CleanJet_eta[0]*CleanJet_eta[0]));
+    TLorentzVector tlvLepton;
+    tlvLepton.SetPtEtaPhiM(Lepton_pt[0], Lepton_eta[0], Lepton_phi[0], 0);
 
-    passJets = (*nCleanJet > 1); 
-    passJets &= (deltaR > 1 && CleanJet_pt[0] >= inputJetEt);
+    jetIndex = 0;
+
+    for (int j=0; j<*nCleanJet; j++) {
+
+      if(CleanJet_pt[j] > 10.) {
+
+	TLorentzVector tlvJet;
+	tlvJet.SetPtEtaPhiM(CleanJet_pt[j], CleanJet_eta[j], CleanJet_phi[j], 0);
+	deltaR = tlvJet.DeltaR(tlvLepton);
+
+	if(deltaR > 1) jetIndex = j; break;
+
+      }	
+      
+    }
+
+    passJets = (*nCleanJet >= 1); 
+    passJets &= (CleanJet_pt[jetIndex] >= inputJetEt);
 
     //QCD region
     if(passJets && passCuts) {
@@ -459,6 +483,11 @@ void nanoFakes::Terminate()
 
   printf("\n\n Writing histograms. This can take a while... \n \n");
 
+  printf("Number of muons loose: %d \n", nMuonsLoose);
+  printf("Number of muons tight: %d \n", nMuonsTight);
+  printf("Number of electrons loose: %d \n", nElectronsLoose);
+  printf("Number of electrons tight: %d \n", nElectronsTight);
+
   root_output->Write("", TObject::kOverwrite);
   root_output->Close();
 
@@ -485,11 +514,16 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
 
   if (channel == m) {
     
+    if(icut == FR_00_QCD) nMuonsLoose ++;
+
     h_Muon_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
     h_Muon_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
     h_Muon_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
     
     if (Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) {
+
+      if(icut == FR_00_QCD) nMuonsTight ++;
+
       h_Muon_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Muon_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
       h_Muon_tight_eta_bin[icut][i]->Fill(lep1eta, event_weight);
@@ -497,6 +531,8 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
     
   } else if (channel == e) {
     
+    if(icut == FR_00_QCD) nElectronsLoose ++;
+
     h_Ele_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
     h_Ele_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
     h_Ele_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
@@ -505,6 +541,8 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
 
     if(Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut)) {
       
+      if(icut == FR_00_QCD) nElectronsTight ++;
+
       h_Ele_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Ele_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
       h_Ele_tight_eta_bin[icut][i]->Fill(lep1eta, event_weight);

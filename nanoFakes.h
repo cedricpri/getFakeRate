@@ -143,7 +143,7 @@ public :
    TTreeReaderValue<Float_t> baseW;
    TTreeReaderValue<Float_t> Xsec;
    TTreeReaderValue<Float_t> puWeight;
-   TTreeReaderValue<Float_t> genWeight;
+   TTreeReaderValue<Float_t> Generator_weight;
    //#endif
 
    TTreeReaderValue<Bool_t> HLT_Mu8_TrkIsoVVL = {fReader, "HLT_Mu8_TrkIsoVVL"};
@@ -161,6 +161,7 @@ public :
    TTreeReaderValue<UInt_t> nCleanJet = {fReader, "nCleanJet"};
    TTreeReaderArray<Float_t> CleanJet_pt = {fReader, "CleanJet_pt"};
    TTreeReaderArray<Float_t> CleanJet_eta = {fReader, "CleanJet_eta"};
+   TTreeReaderArray<Float_t> CleanJet_phi = {fReader, "CleanJet_phi"};
    
    TTreeReaderValue<Float_t> mtw1 = {fReader, "mtw1"};
    TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
