@@ -35,7 +35,7 @@ TFile* root_output;
 TString filename;
 
 bool ismc;
-float channel;
+int channel;
 float inputJetEt;
 float leptonPtMin;
 float leptonEtaMax;
@@ -276,22 +276,45 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
   if(ismc) {
     
-    passTrigger = true;
+    //passTrigger = true;
     event_weight = (*baseW/1000.0) * (*puWeight) * (*Generator_weight);
 
     if(channel == m){
+      
       (Lepton_pt[0] <= 20.) ? event_weight *= 2.903 : event_weight *= 65.944;
+      
+      if (Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5) {
+	
+	passTrigger = true;
+	
+      } else if (Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5) {
+	
+	passTrigger = true;
+	
+      }
+      
     }
 
     if(channel == e){
+      
       (Lepton_pt[0] <= 25.) ? event_weight *= 27.699 : event_weight *= 43.469;
+      
+      if (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+	
+	passTrigger = true;
+	
+      } else if (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+	
+	passTrigger = true;
+      }
+      
     }
 
   } else {
 
     // Muons
     //------------------------------------------------------------------------
-    if (filename.Contains("DoubleMuon") && channel == m) {
+    if ((filename.Contains("DoubleMuon") || filename.Contains("SingleMu")) && channel == m) {
       
       if (Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5) {
       
@@ -306,7 +329,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
     
     // Electrons
     //------------------------------------------------------------------------
-    if (filename.Contains("DoubleEG") && channel == e) {
+    if ((filename.Contains("DoubleEG") || filename.Contains("SingleEle")) && channel == e) {
       
       if (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
 	
@@ -319,7 +342,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
     }
 
   }
-    
+
   //Fake rate calculation
   for (int i=0; i<njetet; i++) {
     
@@ -339,7 +362,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
     jetIndex = 0;
 
-    for (int j=0; j<*nCleanJet; j++) {
+    for (unsigned int j=0; j<*nCleanJet; j++) {
 
       if(CleanJet_pt[j] > 10.) {
 
