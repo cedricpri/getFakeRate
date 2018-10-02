@@ -29,6 +29,7 @@
 
 int nentries = 0;
 int maxentries = -1;
+int counter = 0;
 
 TFile* root_output;
 TString filename;
@@ -342,40 +343,38 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
   }
 
-  bool passCuts = passTrigger;
-
-  passCuts &= (*nLepton == 1);
-  passCuts &= (*mtw1 < 20.);
-  passCuts &= (*MET_pt < 20.);
-
   //Fake rate calculation
   for (int i=0; i<njetet; i++) {
+   
+    bool passCuts = passTrigger;
     
+    passCuts &= (*nLepton == 1);
+    passCuts &= (*mtw1 < 20.);
+    passCuts &= (*MET_pt < 20.);
+ 
     inputJetEt = (channel == e) ? elejetet[i] : muonjetet[i];
-    
-    //Equivalent to getAwayJets function
-    bool passJets = false;
     
     TLorentzVector tlvLepton;
     tlvLepton.SetPtEtaPhiM(Lepton_pt[0], Lepton_eta[0], Lepton_phi[0], 0);
-
+    
     jetIndex = 0;
-
+    
     for (unsigned int j=0; j<*nCleanJet; j++) {
-
+      
       if(CleanJet_pt[j] > 10.) {
-
+	
 	TLorentzVector tlvJet;
 	tlvJet.SetPtEtaPhiM(CleanJet_pt[j], CleanJet_eta[j], CleanJet_phi[j], 0);
 	deltaR = tlvJet.DeltaR(tlvLepton);
-
+	
 	if(deltaR > 1) jetIndex = j; break;
-
+	
       }	
       
     }
-
-    passJets = (*nCleanJet >= 1); 
+    
+    bool passJets = true;
+    passJets &= (*nCleanJet >= 1); 
     passJets &= (CleanJet_pt[jetIndex] >= inputJetEt);
     
     //QCD region
@@ -408,10 +407,11 @@ Bool_t nanoFakes::Process(Long64_t entry)
     
     FillLevelHistograms(FR_00_QCD, i, passJets && passCuts);
 
-    if (passCuts && i == 0 && channel == m) ++nMuonsLoose;
-    if (passCuts && i == 0 && channel == m && Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) ++nMuonsTight;
-    if (passCuts && i == 0 && channel == e) ++nElectronsLoose;
-    if (passCuts && i == 0 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut)) ++nElectronsTight;
+    dxycut = (Lepton_pt[0] <= 20) ? 0.01 : 0.02;
+    if (passCuts && passJets && i == 0 && channel == m) ++nMuonsLoose;
+    if (passCuts && passJets && i == 0 && channel == m && Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) ++nMuonsTight;
+    if (passCuts && passJets && i == 0 && channel == e) ++nElectronsLoose;
+    if (passCuts && passJets && i == 0 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut)) ++nElectronsTight;
 
     //Z Region
     passCuts = passTrigger;
@@ -452,7 +452,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
   }
 
   //Prompt rate calculation
-  passCuts = true;
+  bool passCuts = true;
   
   passCuts &= (76. < m2l && 106. > m2l);
   passCuts &= (*mtw1 < 20.);
@@ -541,7 +541,7 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
   float lep1eta = fabs(Lepton_eta[0]);
 
   if (channel == m) {
-    
+
     h_Muon_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
     h_Muon_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
     h_Muon_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
