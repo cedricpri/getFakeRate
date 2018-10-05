@@ -114,12 +114,32 @@ public :
    TH1D* h_Ele_loose_m2l [ncutFR][njetet];
    TH1D* h_Ele_tight_m2l [ncutFR][njetet];
 
-   // Declare effective luminosity estimation histograms
+   // Effective luminosity estimation histograms
    //----------------------------------------------------------------------------
    TH2D* h_Muon_loose_pt_m2l[ncutFR][njetet];
    TH2D* h_Muon_tight_pt_m2l[ncutFR][njetet];
    TH2D* h_Ele_loose_pt_m2l [ncutFR][njetet];
    TH2D* h_Ele_tight_pt_m2l [ncutFR][njetet];
+
+   // Yields histograms for getYields.C
+   //--------------------------------------------------------------------------
+   TH1D* h_Muon_loose_lowpt[ncutFR][njetet];
+   TH1D* h_Muon_loose_lowpt_weighted[ncutFR][njetet];
+   TH1D* h_Muon_loose_highpt[ncutFR][njetet];
+   TH1D* h_Muon_loose_highpt_weighted[ncutFR][njetet];
+   TH1D* h_Muon_tight_lowpt[ncutFR][njetet];
+   TH1D* h_Muon_tight_lowpt_weighted[ncutFR][njetet];
+   TH1D* h_Muon_tight_highpt[ncutFR][njetet];
+   TH1D* h_Muon_tight_highpt_weighted[ncutFR][njetet];
+
+   TH1D* h_Ele_loose_lowpt[ncutFR][njetet];
+   TH1D* h_Ele_loose_lowpt_weighted[ncutFR][njetet];
+   TH1D* h_Ele_loose_highpt[ncutFR][njetet];
+   TH1D* h_Ele_loose_highpt_weighted[ncutFR][njetet];
+   TH1D* h_Ele_tight_lowpt[ncutFR][njetet];
+   TH1D* h_Ele_tight_lowpt_weighted[ncutFR][njetet];
+   TH1D* h_Ele_tight_highpt[ncutFR][njetet];
+   TH1D* h_Ele_tight_highpt_weighted[ncutFR][njetet];
 
    // Prompt rate histograms
    //--------------------------------------------------------------------------

@@ -49,10 +49,14 @@ TLorentzVector tlv2;
 
 int jetIndex;
 
-int nElectronsLoose = 0;
-int nElectronsTight = 0;
-int nMuonsLoose = 0;
-int nMuonsTight = 0;
+int nElectronsLooseLowPt = 0;
+int nElectronsTightLowPt = 0;
+int nElectronsLooseHighPt = 0;
+int nElectronsTightHighPt = 0;
+int nMuonsLooseLowPt = 0;
+int nMuonsTightLowPt = 0;
+int nMuonsLooseHighPt = 0;
+int nMuonsTightHighPt = 0;
 
 void nanoFakes::Begin(TTree * /*tree*/)
 {
@@ -84,7 +88,7 @@ void nanoFakes::Begin(TTree * /*tree*/)
      root_output -> cd();
      gDirectory -> mkdir(directory);
      root_output -> cd(directory);
-
+   
      for (int j=0; j<njetet; j++) {
        
        TString muonsuffix = Form("_%.0fGeV", muonjetet[j]);
@@ -118,6 +122,25 @@ void nanoFakes::Begin(TTree * /*tree*/)
        h_Ele_loose_pt_m2l [i][j] = new TH2D("h_Ele_loose_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
        h_Ele_tight_pt_m2l [i][j] = new TH2D("h_Ele_tight_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
        
+       //Initialize yields histograms
+       h_Muon_loose_lowpt[i][j] = new TH1D("h_Muon_loose_lowpt" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_loose_lowpt_weighted[i][j] = new TH1D("h_Muon_loose_lowpt_weighted" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_loose_highpt[i][j] = new TH1D("h_Muon_loose_highpt" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_loose_highpt_weighted[i][j] = new TH1D("h_Muon_loose_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_tight_lowpt[i][j] = new TH1D("h_Muon_tight_lowpt" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_tight_lowpt_weighted[i][j] = new TH1D("h_Muon_tight_lowpt_weighted" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_tight_highpt[i][j] = new TH1D("h_Muon_tight_highpt" + muonsuffix, "", nptbin, ptbins);
+       h_Muon_tight_highpt_weighted[i][j] = new TH1D("h_Muon_tight_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+       
+       h_Ele_loose_lowpt[i][j] = new TH1D("h_Ele_loose_lowpt" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_loose_lowpt_weighted[i][j] = new TH1D("h_Ele_loose_lowpt_weighted" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_loose_highpt[i][j] = new TH1D("h_Ele_loose_highpt" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_loose_highpt_weighted[i][j] = new TH1D("h_Ele_loose_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_tight_lowpt[i][j] = new TH1D("h_Ele_tight_lowpt" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_tight_lowpt_weighted[i][j] = new TH1D("h_Ele_tight_lowpt_weighted" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_tight_highpt[i][j] = new TH1D("h_Ele_tight_highpt" + muonsuffix, "", nptbin, ptbins);
+       h_Ele_tight_highpt_weighted[i][j] = new TH1D("h_Ele_tight_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+    
      }
    }
 
@@ -353,7 +376,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
     passCuts &= (*MET_pt < 20.);
  
     inputJetEt = (channel == e) ? elejetet[i] : muonjetet[i];
-    
+
     TLorentzVector tlvLepton;
     tlvLepton.SetPtEtaPhiM(Lepton_pt[0], Lepton_eta[0], Lepton_phi[0], 0);
     
@@ -408,10 +431,17 @@ Bool_t nanoFakes::Process(Long64_t entry)
     FillLevelHistograms(FR_00_QCD, i, passJets && passCuts);
 
     dxycut = (Lepton_pt[0] <= 20) ? 0.01 : 0.02;
-    if (passCuts && passJets && i == 0 && channel == m) ++nMuonsLoose;
-    if (passCuts && passJets && i == 0 && channel == m && Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) ++nMuonsTight;
-    if (passCuts && passJets && i == 0 && channel == e) ++nElectronsLoose;
-    if (passCuts && passJets && i == 0 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut)) ++nElectronsTight;
+    //Loose leptons counter
+    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5) ++nMuonsLooseLowPt;
+    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5) ++nMuonsLooseHighPt;
+    if (passCuts && passJets && i == 3 && channel == e && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsLooseLowPt;
+    if (passCuts && passJets && i == 3 && channel == e && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsLooseHighPt;
+
+    //Tight leptons counter
+    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) ++nMuonsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) ++nMuonsTightHighPt;
+    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut) && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut) && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
 
     //Z Region
     passCuts = passTrigger;
@@ -511,10 +541,17 @@ void nanoFakes::Terminate()
 
   printf("\n\n Writing histograms. This can take a while... \n \n");
 
-  printf("Number of muons loose: %d \n", nMuonsLoose);
-  printf("Number of muons tight: %d \n", nMuonsTight);
-  printf("Number of electrons loose: %d \n", nElectronsLoose);
-  printf("Number of electrons tight: %d \n", nElectronsTight);
+  printf("============== MUONS ============== \n"); 
+  printf("Number of muons loose, low pt: %d \n", nMuonsLooseLowPt);
+  printf("Number of muons loose, high pt: %d \n", nMuonsLooseHighPt);
+  printf("Number of muons tight, low pt: %d \n", nMuonsTightLowPt);
+  printf("Number of muons tight, high pt: %d \n", nMuonsTightHighPt);
+
+    printf("============== ELECTRONS ============== \n"); 
+  printf("Number of electrons loose, low pt: %d \n", nElectronsLooseLowPt);
+  printf("Number of electrons loose, high pt: %d \n", nElectronsLooseHighPt);
+  printf("Number of electrons tight, low pt: %d \n", nElectronsTightLowPt);
+  printf("Number of electrons tight, high pt: %d \n", nElectronsTightHighPt);
 
   root_output->Write("", TObject::kOverwrite);
   root_output->Close();
@@ -545,12 +582,29 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
     h_Muon_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
     h_Muon_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
     h_Muon_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
-    
+
+    if(Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5) { //Low pt trigger
+      h_Muon_loose_lowpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+      h_Muon_loose_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+    } else if(Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5) {
+      h_Muon_loose_highpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+      h_Muon_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+    }
+
     if (Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) {
 
       h_Muon_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Muon_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
       h_Muon_tight_eta_bin[icut][i]->Fill(lep1eta, event_weight);
+    
+      if(Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5) { //Low pt trigger
+	h_Muon_tight_lowpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+	h_Muon_tight_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+      } else if(Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5) {
+	h_Muon_tight_highpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+	h_Muon_tight_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+      }
+      
     }
     
   } else if (channel == e) {
@@ -561,12 +615,28 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
     
     dxycut = (Lepton_pt[0] <= 20) ? 0.01 : 0.02;
 
+    if(Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) { //Low pt trigger
+      h_Ele_loose_lowpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+      h_Ele_loose_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+    } else if(Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+      h_Ele_loose_highpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+      h_Ele_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+    }
+
     if(Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut)) {
       
       h_Ele_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Ele_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
       h_Ele_tight_eta_bin[icut][i]->Fill(lep1eta, event_weight);
-      
+     
+      if(Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) { //Low pt trigger
+	h_Ele_tight_lowpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+	h_Ele_tight_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+      } else if(Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+	h_Ele_tight_highpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
+	h_Ele_tight_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+      }
+ 
     }
 
   }
