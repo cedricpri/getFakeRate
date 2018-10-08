@@ -92,7 +92,7 @@ void getYields() {
   printf("\n");
 
   printf("& & Data & \\multicolumn{3}{c|}{W+jets} & \\multicolumn{3}{c}{Z+jets} \\\\ \n");
-  printf("& Trigger & & With & W/o & Ratio & With & W/o & Ratio \\\\ \n");
+  printf("& Trigger & & W/o & With & Ratio & W/o & With & Ratio \\\\ \n");
   printf("\\hline \n");
 
   printf("\\multirow{2}{*}{Loose muons}& low $p_T$ & %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Muon_loose_lowpt->Integral(-1, -1), h_wjets_Muon_loose_lowpt->Integral(-1, -1), h_wjets_Muon_loose_lowpt_weighted->Integral(-1, -1), (h_wjets_Muon_loose_lowpt_weighted->Integral(-1, -1)/h_wjets_Muon_loose_lowpt->Integral(-1, -1)), h_zjets_Muon_loose_lowpt->Integral(-1, -1), h_zjets_Muon_loose_lowpt_weighted->Integral(-1, -1), (h_zjets_Muon_loose_lowpt_weighted->Integral(-1, -1)/h_zjets_Muon_loose_lowpt->Integral(-1, -1)));
