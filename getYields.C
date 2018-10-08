@@ -80,38 +80,35 @@ void getYields() {
   TH1D* h_zjets_Ele_tight_highpt  = (TH1D*)zjets ->Get("FR/00_QCD/h_Ele_tight_highpt_25GeV");
   TH1D* h_zjets_Ele_tight_highpt_weighted  = (TH1D*)zjets ->Get("FR/00_QCD/h_Ele_tight_highpt_weighted_25GeV");
   
-  //Print low pt trigger table
-  //----------------------------------------------------------------------------
-
   printf("\n \n ==========================================================================");
   printf("\n ================================ LOW PT ==================================");
   printf("\n ========================================================================== \n");
   printf("      * HLT_Mu8_TrkIsoVVL (2.90/pb) \n");
+  printf("      * HLT_Mu17_TrkIsoVVL (65.94/pb) \n");
   printf("      * HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 (27.70/pb) \n");
+  printf("      * HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 (45.47/pb) \n");
   printf("========================================================================== \n");
-
-  printf("                   Data with (w/o) weight               W+Jets                       Z+Jets \n");
-  printf("Loose muons          %8.1f (%8.1f)            %8.1f (%8.1f)              %8.1f (%8.1f) \n", h_data_Muon_loose_lowpt->Integral(-1, -1), h_data_Muon_loose_lowpt_weighted->Integral(-1, -1), h_wjets_Muon_loose_lowpt->Integral(-1, -1), h_wjets_Muon_loose_lowpt_weighted->Integral(-1, -1), h_zjets_Muon_loose_lowpt->Integral(-1, -1), h_zjets_Muon_loose_lowpt_weighted->Integral(-1, -1));
-  printf("Tight muons          %8.1f (%8.1f)            %8.1f (%8.1f)              %8.1f (%8.1f) \n", h_data_Muon_tight_lowpt->Integral(-1, -1), h_data_Muon_tight_lowpt_weighted->Integral(-1, -1), h_wjets_Muon_tight_lowpt->Integral(-1, -1), h_wjets_Muon_tight_lowpt_weighted->Integral(-1, -1), h_zjets_Muon_tight_lowpt->Integral(-1, -1), h_zjets_Muon_tight_lowpt_weighted->Integral(-1, -1));
-  printf("Loose electrons      %8.1f (%8.1f)            %8.1f (%8.1f)              %8.1f (%8.1f) \n", h_data_Ele_loose_lowpt->Integral(-1, -1), h_data_Ele_loose_lowpt_weighted->Integral(-1, -1), h_wjets_Ele_loose_lowpt->Integral(-1, -1), h_wjets_Ele_loose_lowpt_weighted->Integral(-1, -1), h_zjets_Ele_loose_lowpt->Integral(-1, -1), h_zjets_Ele_loose_lowpt_weighted->Integral(-1, -1));
-  printf("Tight electrons      %8.1f (%8.1f)            %8.1f (%8.1f)              %8.1f (%8.1f) \n", h_data_Ele_tight_lowpt->Integral(-1, -1), h_data_Ele_tight_lowpt_weighted->Integral(-1, -1), h_wjets_Ele_tight_lowpt->Integral(-1, -1), h_wjets_Ele_tight_lowpt_weighted->Integral(-1, -1), h_zjets_Ele_tight_lowpt->Integral(-1, -1), h_zjets_Ele_tight_lowpt_weighted->Integral(-1, -1));
 
   printf("\n");
 
-  //Print high pt trigger table
-  //----------------------------------------------------------------------------
+  printf("& & Data & \\multicolumn{3}{c|}{W+jets} & \\multicolumn{3}{c}{Z+jets} \\\\ \n");
+  printf("& Trigger & & With & W/o & Ratio & With & W/o & Ratio \\\\ \n");
+  printf("\\hline \n");
 
-  printf("\n \n ==========================================================================");
-  printf("\n ================================ HIGH PT =================================");
-  printf("\n ========================================================================== \n");
-  printf("      * HLT_Mu17_TrkIsoVVL (65.94/pb) \n");
-  printf("      * HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 (45.47/pb) \n");
-  printf("========================================================================== \n");
-  printf("                   Data with (w/o) weight              W+Jets                       Z+Jets \n");
-  printf("Loose muons          %8.1f (%8.1f)           %8.1f (%8.1f)             %8.1f (%8.1f) \n", h_data_Muon_loose_highpt->Integral(-1, -1), h_data_Muon_loose_highpt_weighted->Integral(-1, -1), h_wjets_Muon_loose_highpt->Integral(-1, -1), h_wjets_Muon_loose_highpt_weighted->Integral(-1, -1), h_zjets_Muon_loose_highpt->Integral(-1, -1), h_zjets_Muon_loose_highpt_weighted->Integral(-1, -1));
-  printf("Tight muons          %8.1f (%8.1f)           %8.1f (%8.1f)             %8.1f (%8.1f) \n", h_data_Muon_tight_highpt->Integral(-1, -1), h_data_Muon_tight_highpt_weighted->Integral(-1, -1), h_wjets_Muon_tight_highpt->Integral(-1, -1), h_wjets_Muon_tight_highpt_weighted->Integral(-1, -1), h_zjets_Muon_tight_highpt->Integral(-1, -1), h_zjets_Muon_tight_highpt_weighted->Integral(-1, -1));
-  printf("Loose electrons      %8.1f (%8.1f)           %8.1f (%8.1f)             %8.1f (%8.1f) \n", h_data_Ele_loose_highpt->Integral(-1, -1), h_data_Ele_loose_highpt_weighted->Integral(-1, -1), h_wjets_Ele_loose_highpt->Integral(-1, -1), h_wjets_Ele_loose_highpt_weighted->Integral(-1, -1), h_zjets_Ele_loose_highpt->Integral(-1, -1), h_zjets_Ele_loose_highpt_weighted->Integral(-1, -1));
-  printf("Tight electrons      %8.1f (%8.1f)           %8.1f (%8.1f)             %8.1f (%8.1f) \n", h_data_Ele_tight_highpt->Integral(-1, -1), h_data_Ele_tight_highpt_weighted->Integral(-1, -1), h_wjets_Ele_tight_highpt->Integral(-1, -1), h_wjets_Ele_tight_highpt_weighted->Integral(-1, -1), h_zjets_Ele_tight_highpt->Integral(-1, -1), h_zjets_Ele_tight_highpt_weighted->Integral(-1, -1));
+  printf("\\multirow{2}{*}{Loose muons}& low $p_T$ & %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Muon_loose_lowpt->Integral(-1, -1), h_wjets_Muon_loose_lowpt->Integral(-1, -1), h_wjets_Muon_loose_lowpt_weighted->Integral(-1, -1), (h_wjets_Muon_loose_lowpt_weighted->Integral(-1, -1)/h_wjets_Muon_loose_lowpt->Integral(-1, -1)), h_zjets_Muon_loose_lowpt->Integral(-1, -1), h_zjets_Muon_loose_lowpt_weighted->Integral(-1, -1), (h_zjets_Muon_loose_lowpt_weighted->Integral(-1, -1)/h_zjets_Muon_loose_lowpt->Integral(-1, -1)));
+  printf("& high $p_T$ &  %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Muon_loose_highpt->Integral(-1, -1), h_wjets_Muon_loose_highpt->Integral(-1, -1), h_wjets_Muon_loose_highpt_weighted->Integral(-1, -1), (h_wjets_Muon_loose_highpt_weighted->Integral(-1, -1)/h_wjets_Muon_loose_highpt->Integral(-1, -1)), h_zjets_Muon_loose_highpt->Integral(-1, -1), h_zjets_Muon_loose_highpt_weighted->Integral(-1, -1), (h_zjets_Muon_loose_highpt_weighted->Integral(-1, -1)/h_zjets_Muon_loose_highpt->Integral(-1, -1)));
+  printf("\\hline \n");
+
+  printf("\\multirow{2}{*}{Tight muons}& low $p_T$ & %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Muon_tight_lowpt->Integral(-1, -1), h_wjets_Muon_tight_lowpt->Integral(-1, -1), h_wjets_Muon_tight_lowpt_weighted->Integral(-1, -1), (h_wjets_Muon_tight_lowpt_weighted->Integral(-1, -1)/h_wjets_Muon_tight_lowpt->Integral(-1, -1)), h_zjets_Muon_tight_lowpt->Integral(-1, -1), h_zjets_Muon_tight_lowpt_weighted->Integral(-1, -1), (h_zjets_Muon_tight_lowpt_weighted->Integral(-1, -1)/h_zjets_Muon_tight_lowpt->Integral(-1, -1)));
+  printf("& high $p_T$ &  %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Muon_tight_highpt->Integral(-1, -1), h_wjets_Muon_tight_highpt->Integral(-1, -1), h_wjets_Muon_tight_highpt_weighted->Integral(-1, -1), (h_wjets_Muon_tight_highpt_weighted->Integral(-1, -1)/h_wjets_Muon_tight_highpt->Integral(-1, -1)), h_zjets_Muon_tight_highpt->Integral(-1, -1), h_zjets_Muon_tight_highpt_weighted->Integral(-1, -1), (h_zjets_Muon_tight_highpt_weighted->Integral(-1, -1)/h_zjets_Muon_tight_highpt->Integral(-1, -1)));
+  printf("\\hline \n");
+
+  printf("\\multirow{2}{*}{Loose Electrons}& low $p_T$ & %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Ele_loose_lowpt->Integral(-1, -1), h_wjets_Ele_loose_lowpt->Integral(-1, -1), h_wjets_Ele_loose_lowpt_weighted->Integral(-1, -1), (h_wjets_Ele_loose_lowpt_weighted->Integral(-1, -1)/h_wjets_Ele_loose_lowpt->Integral(-1, -1)), h_zjets_Ele_loose_lowpt->Integral(-1, -1), h_zjets_Ele_loose_lowpt_weighted->Integral(-1, -1), (h_zjets_Ele_loose_lowpt_weighted->Integral(-1, -1)/h_zjets_Ele_loose_lowpt->Integral(-1, -1)));
+  printf("& high $p_T$ &  %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Ele_loose_highpt->Integral(-1, -1), h_wjets_Ele_loose_highpt->Integral(-1, -1), h_wjets_Ele_loose_highpt_weighted->Integral(-1, -1), (h_wjets_Ele_loose_highpt_weighted->Integral(-1, -1)/h_wjets_Ele_loose_highpt->Integral(-1, -1)), h_zjets_Ele_loose_highpt->Integral(-1, -1), h_zjets_Ele_loose_highpt_weighted->Integral(-1, -1), (h_zjets_Ele_loose_highpt_weighted->Integral(-1, -1)/h_zjets_Ele_loose_highpt->Integral(-1, -1)));
+  printf("\\hline \n");
+
+  printf("\\multirow{2}{*}{Tight electrons}& low $p_T$ & %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Ele_tight_lowpt->Integral(-1, -1), h_wjets_Ele_tight_lowpt->Integral(-1, -1), h_wjets_Ele_tight_lowpt_weighted->Integral(-1, -1), (h_wjets_Ele_tight_lowpt_weighted->Integral(-1, -1)/h_wjets_Ele_tight_lowpt->Integral(-1, -1)), h_zjets_Ele_tight_lowpt->Integral(-1, -1), h_zjets_Ele_tight_lowpt_weighted->Integral(-1, -1), (h_zjets_Ele_tight_lowpt_weighted->Integral(-1, -1)/h_zjets_Ele_tight_lowpt->Integral(-1, -1)));
+  printf("& high $p_T$ &  %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Ele_tight_highpt->Integral(-1, -1), h_wjets_Ele_tight_highpt->Integral(-1, -1), h_wjets_Ele_tight_highpt_weighted->Integral(-1, -1), (h_wjets_Ele_tight_highpt_weighted->Integral(-1, -1)/h_wjets_Ele_tight_highpt->Integral(-1, -1)), h_zjets_Ele_tight_highpt->Integral(-1, -1), h_zjets_Ele_tight_highpt_weighted->Integral(-1, -1), (h_zjets_Ele_tight_highpt_weighted->Integral(-1, -1)/h_zjets_Ele_tight_highpt->Integral(-1, -1)));
 
   printf("\n \n");
 
