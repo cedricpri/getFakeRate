@@ -48,6 +48,7 @@ TLorentzVector tlv1;
 TLorentzVector tlv2;
 
 int jetIndex;
+int leptonIndex;
 
 int nElectronsLooseLowPt = 0;
 int nElectronsTightLowPt = 0;
@@ -232,7 +233,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
     for(unsigned int iLep1 = 0; iLep1 < *nLepton; iLep1++) {
       
-      if(Lepton_pt[iLep1] < 10.) continue;
+      if(Lepton_pt[iLep1] < 25.) continue;
 
       for(unsigned int iLep2 = 0; iLep2 < *nLepton; iLep2++) {
 	
@@ -254,7 +255,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	  dxycut = (Lepton_pt[iLep1] <= 20) ? 0.01 : 0.02;
 
 	  //Is the first lepton tight?
-	  if(abs(Lepton_pdgId[iLep1]) == 11 && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[iLep1]] > 0.5 && (Electron_dz[Lepton_electronIdx[iLep1]] < 0.1) && (Electron_dxy[Lepton_electronIdx[iLep1]] < dxycut)) {
+	  if(abs(Lepton_pdgId[iLep1]) == 11 && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[iLep1]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[iLep1]] < 0.1) && fabs(Electron_dxy[Lepton_electronIdx[iLep1]] < dxycut)) {
 	    
 	    Zlepton1type = Tight;
 	    Zdecayflavour = 11;
@@ -269,9 +270,10 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	  }
 
 	  dxycut = (Lepton_pt[iLep2] <= 20) ? 0.01 : 0.02;
+	  leptonIndex = iLep2;
 
 	  //Is the second lepton tight?
-	  if(abs(Lepton_pdgId[iLep2]) == 11 && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[iLep2]] > 0.5 && (Electron_dz[Lepton_electronIdx[iLep1]] < 0.1) && (Electron_dxy[Lepton_electronIdx[iLep2]] < dxycut)) {
+	  if(abs(Lepton_pdgId[iLep2]) == 11 && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[iLep2]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[iLep1]] < 0.1) && fabs(Electron_dxy[Lepton_electronIdx[iLep2]] < dxycut)) {
 	    
 	    Zlepton2type = Tight;
 	    if(ismc) Zlepton2idisoW = 1.0; //Temporary value until put in the trees
@@ -380,7 +382,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
     TLorentzVector tlvLepton;
     tlvLepton.SetPtEtaPhiM(Lepton_pt[0], Lepton_eta[0], Lepton_phi[0], 0);
     
-    jetIndex = 0;
+    jetIndex = -1;
     
     for (unsigned int j=0; j<*nCleanJet; j++) {
       
@@ -398,7 +400,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
     
     bool passJets = true;
     passJets &= (*nCleanJet >= 1); 
-    passJets &= (CleanJet_pt[jetIndex] >= inputJetEt);
+    passJets &= (jetIndex != -1 && CleanJet_pt[jetIndex] >= inputJetEt);
     
     //QCD region
     if (passJets && passCuts) {
@@ -440,8 +442,8 @@ Bool_t nanoFakes::Process(Long64_t entry)
     //Tight leptons counter
     if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) ++nMuonsTightLowPt;
     if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight80x_HWWW[0] > 0.5) ++nMuonsTightHighPt;
-    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut) && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
-    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut) && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[0]] < 0.1) && fabs(Electron_dxy[Lepton_electronIdx[0]] < dxycut) && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[0]] < 0.1) && fabs(Electron_dxy[Lepton_electronIdx[0]] < dxycut) && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
 
     //Z Region
     passCuts = passTrigger;
@@ -485,12 +487,12 @@ Bool_t nanoFakes::Process(Long64_t entry)
   bool passCuts = true;
   
   passCuts &= (76. < m2l && 106. > m2l);
-  passCuts &= (*mtw1 < 20.);
+  //passCuts &= (*mtw1 < 20.);
   
   if (passCuts && filename.Contains("DY") && Zlepton1type == Tight) {
 
-    float Zlep2pt  = Lepton_pt[1];
-    float Zlep2eta = fabs(Lepton_eta[1]);
+    float Zlep2pt  = Lepton_pt[leptonIndex];
+    float Zlep2eta = fabs(Lepton_eta[leptonIndex]);
     
     if (fabs(Zdecayflavour) == 11) {
     
@@ -623,7 +625,7 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       h_Ele_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
     }
 
-    if(Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && (Electron_dz[Lepton_electronIdx[0]] < 0.1) && (Electron_dxy[Lepton_electronIdx[0]] < dxycut)) {
+    if(Electron_mvaFall17Iso_WP80[Lepton_electronIdx[0]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[0]] < 0.1) && fabs(Electron_dxy[Lepton_electronIdx[0]] < dxycut)) {
       
       h_Ele_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Ele_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
