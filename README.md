@@ -2,9 +2,14 @@ Small standalone script to calculate both the fake and prompt rates using a gene
 
 # Step 1
 
-It is either possible to run by hand the script runNanoFakes.C on one particular file, or to batch submit several samples at once (from a txt file), using the following command:
+It is either possible to run by hand the script runNanoFakes.C on one particular file, or to batch submit several samples at once (from a txt file), using the following command
 
-      ./submit_jobs.sh <samples.txt>
+      python submit-jobs.py -i <samples.txt>
+
+It is possible to checkthe status of the jobs by using the command 
+
+      condor_q      
+      watch -n5 condor_q
 
 The <samples.txt> file should only contain one sample per line, and should include the prefix "nanoLatino_" but NOT the complete path, which is defined in runNanoFakes.C
 Watch out that an empty directory called "results" should be present before hand in your working directory to keep the output of the jobs sent.
