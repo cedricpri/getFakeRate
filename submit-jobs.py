@@ -20,17 +20,28 @@ def submit():
     parser = optparse.OptionParser(usage='usage: %prog [opts] FilenameWithSamples', version='%prog 1.0')
     parser.add_option('-q', '--queue', action='store', type=str, dest='queue', default='tomorrow', help='Name of the queue to be used')
     parser.add_option('-i', '--input', action='store', type=str, dest='inputFile', default='', help='Name of the txt input file with the samples')
+    parser.add_option('-d', '--directory', action='store', type=str, dest='inputDir', default='', help='Name of the directory where the samples can be found')
     parser.add_option('-o', '--output', action='store', type=str, dest='outputDir', default='/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/jobs', help='Output directory')
     (opts, args) = parser.parse_args()
 
     #Read the options given
-    inputFile = opts.inputFile
     queue = opts.queue
+    inputFile = opts.inputFile
+    inputDir = opts.inputDir
     outputDir = opts.outputDir
 
     if not inputFile:
-        print "You have to enter an input file by using the -i option."
-        return
+        if not inputDir:
+            print "You have to enter an input file by using the -i option, or a directory using the -d option."
+            return
+        else:
+            inputFile = "samples/samples_to_be_submitted.txt"
+            sampleFile = open(inputFile, "w+")
+            samples = os.listdir(inputDir)
+            for name in samples:
+                name = name.replace('nanoLatino_','')
+                name = name.replace('.root','')
+                sampleFile.write(name + "\n")
 
     if queue not in ['espresso', 'microcentury', 'longlunch', 'workday', 'tomorrow', 'testmatch', 'nextweek']:
         print "Queue not found.... Using tomorrow as default value."
@@ -109,7 +120,8 @@ def submit():
         completeJobFile.write(JName + '\n')
     completeJobFile.write(')\n')
     
-    os.system('condor_submit' + outputdir + "all.sub")
+    #os.system("rm samples/samples_to_be_submitted.txt")
+    #os.system('condor_submit' + outputdir + "all.sub")
     print "Done! "+ str(numberSamples) +" jobs have been submitted. \n"        
 
 if __name__ == "__main__":
