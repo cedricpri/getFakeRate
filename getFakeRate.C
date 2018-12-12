@@ -1,4 +1,3 @@
-
 // Constants
 //------------------------------------------------------------------------------
 const Int_t   njetet = 7;
@@ -16,7 +15,7 @@ bool    drawone      = false;
 bool    drawall      = true;
 bool    savepng      = true;
 bool    setgrid      = true;
-bool    Wsubtraction = true;
+bool    Wsubtraction = false;
 bool    Zsubtraction = true;
 
 TFile*  dataFR;
@@ -119,6 +118,7 @@ void getFakeRate(TString inputdir_name  = "results/",
     WriteFR("Muon", muoscale, muojetet);
 
     if(drawone && i == 3) { //We are mostly interested in Jetet > 25 GeV for electrons
+
       DrawFR("Ele",  "pt",  "p_{T} [GeV]", elescale, elejetet);
       DrawFR("Ele",  "eta", "|#eta|",      elescale, elejetet);
     }
@@ -174,8 +174,7 @@ void DrawFR(TString flavour,
 
   h_EWKrel_tight->Divide(h_tight_correction, h_tight_data);    
   h_EWKrel_loose->Divide(h_loose_correction, h_loose_data);    
-
-
+ 
   // Prepare fake rate histograms
   //----------------------------------------------------------------------------
   TH1D* h_FR                 = (TH1D*)h_tight_data->Clone("h_" + flavour + "_FR_"                 + variable);
@@ -241,7 +240,6 @@ void DrawFR(TString flavour,
   Cosmetics(h_EWKrel_loose, "ep", xtitle, title3, kBlack);
 
   DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.2 fb^{-1} (13 TeV)");
-
 
   // Save
   //----------------------------------------------------------------------------
@@ -446,7 +444,7 @@ void Cosmetics(TH1D*     hist,
   hist->SetXTitle     (xtitle);
   hist->SetYTitle     (ytitle);
 
-  hist->SetAxisRange(0, 1.5, "Y");
+  hist->SetAxisRange(0.0, 1.0, "Y");
 
   hist->GetXaxis()->SetTitleOffset(1.5);
   hist->GetYaxis()->SetTitleOffset(1.8);

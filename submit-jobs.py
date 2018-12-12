@@ -20,7 +20,7 @@ def submit():
     parser = optparse.OptionParser(usage='usage: %prog [opts] FilenameWithSamples', version='%prog 1.0')
     parser.add_option('-q', '--queue', action='store', type=str, dest='queue', default='tomorrow', help='Name of the queue to be used')
     parser.add_option('-i', '--input', action='store', type=str, dest='inputFile', default='', help='Name of the txt input file with the samples')
-    parser.add_option('-o', '--output', action='store', type=str, dest='outputDir', default='jobs/', help='Output directory')
+    parser.add_option('-o', '--output', action='store', type=str, dest='outputDir', default='/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/jobs', help='Output directory')
     (opts, args) = parser.parse_args()
 
     #Read the options given
@@ -47,6 +47,8 @@ def submit():
     numberSamples = 0
     outputDir = outputDir+"/"
 
+    jobList = []
+
     for sample in input:
             
         numberSamples += 1
@@ -66,14 +68,15 @@ def submit():
         errFileName = outputDir+sample+".err"
         outFileName = outputDir+sample+".out"
         logFileName = outputDir+sample+".log"
-        jidFileName = outputDir+sample+".jid"
+        #jidFileName = outputDir+sample+".jid"
         
         jobFile = open(jobFileName, "w+")
+        jobFile.write("#!/bin/sh \n")
         jobFile.write("cd - \n")
         jobFile.write("cd /afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate \n")
         jobFile.write("eval `scramv1 runtime -sh` \n \n")
 
-        jobFile.write("root -l -b -q '/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/runNanoFakes.C(" + sample + ")'")
+        jobFile.write("root -l -b -q '/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/runNanoFakes.C(\"" + sample + "\")' \n \n")
         jobFile.close()
         
         subFile = open(subFileName, "w+")
@@ -86,8 +89,27 @@ def submit():
         subFile.write('queue \n')
         subFile.close()
         
-        os.system('condor_submit '+subFileName+' > ' +jidFileName)
+        if not sample in jobList:
+            jobList.append(sample)
 
+        #Submission is done for efficiency purposes (send all the jobs at once)
+        #os.system('condor_submit '+subFileName+' > ' +jidFileName)
+        #print "-> File " + sample + " submitted to queue"
+
+    completeJobFile = open(outputDir+"all.sub", "w+")    
+    completeJobFile.write('executable = '+outputDir+'$(JName).sh \n')
+    completeJobFile.write('universe = vanilla \n')
+    completeJobFile.write('output = '+outputDir+'$(JName).out \n')
+    completeJobFile.write('error = '+outputDir+'$(JName).err \n')
+    completeJobFile.write('log = '+outputDir+'$(JName).log \n')
+    completeJobFile.write('+JobFlavour  = '+ queue +'\n')
+    completeJobFile.write('queue JName in (\n')
+    for JName in jobList:
+        print JName
+        completeJobFile.write(JName + '\n')
+    completeJobFile.write(')\n')
+    
+    os.system('condor_submit' + outputdir + "all.sub")
     print "Done! "+ str(numberSamples) +" jobs have been submitted. \n"        
 
 if __name__ == "__main__":

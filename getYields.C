@@ -81,7 +81,7 @@ void getYields() {
   TH1D* h_zjets_Ele_tight_highpt_weighted  = (TH1D*)zjets ->Get("FR/00_QCD/h_Ele_tight_highpt_weighted_25GeV");
   
   printf("\n \n ==========================================================================");
-  printf("\n ================================ LOW PT ==================================");
+  printf("\n ================================ YIELDS ==================================");
   printf("\n ========================================================================== \n");
   printf("      * HLT_Mu8_TrkIsoVVL (2.90/pb) \n");
   printf("      * HLT_Mu17_TrkIsoVVL (65.94/pb) \n");
@@ -92,7 +92,7 @@ void getYields() {
   printf("\n");
 
   printf("& & Data & \\multicolumn{3}{c|}{W+jets} & \\multicolumn{3}{c}{Z+jets} \\\\ \n");
-  printf("& Trigger & & W/o & With & Ratio & W/o & With & Ratio \\\\ \n");
+  printf("& Trigger & & W/o weight & With & Ratio & W/o weight & With & Ratio \\\\ \n");
   printf("\\hline \n");
 
   printf("\\multirow{2}{*}{Loose muons}& low $p_T$ & %.0f & %.1f & %.1f & %.3f & %.1f & %.1f & %.3f \\\\ \n", h_data_Muon_loose_lowpt->Integral(-1, -1), h_wjets_Muon_loose_lowpt->Integral(-1, -1), h_wjets_Muon_loose_lowpt_weighted->Integral(-1, -1), (h_wjets_Muon_loose_lowpt_weighted->Integral(-1, -1)/h_wjets_Muon_loose_lowpt->Integral(-1, -1)), h_zjets_Muon_loose_lowpt->Integral(-1, -1), h_zjets_Muon_loose_lowpt_weighted->Integral(-1, -1), (h_zjets_Muon_loose_lowpt_weighted->Integral(-1, -1)/h_zjets_Muon_loose_lowpt->Integral(-1, -1)));

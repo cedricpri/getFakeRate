@@ -187,7 +187,7 @@ public :
    TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
    TTreeReaderValue<Float_t> dphilep1jet1 = {fReader, "dphilep1jet1"};
 
-   TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17noIso_WP80 = {fReader, "Lepton_isTightElectron_mvaFall17noIso_WP80"};
+   /*TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17noIso_WP80 = {fReader, "Lepton_isTightElectron_mvaFall17noIso_WP80"};
    TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17noIso = {fReader, "Lepton_isTightElectron_mvaFall17noIso"};
    TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17noIso_WP90 = {fReader, "Lepton_isTightElectron_mvaFall17noIso_WP90"};
    TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso = {fReader, "Lepton_isTightElectron_mvaFall17Iso"};
@@ -197,7 +197,8 @@ public :
    TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP80 = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP80"};
    TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Medium80x = {fReader, "Lepton_isTightMuon_cut_Medium80x"};
    TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight80x_HWWW = {fReader, "Lepton_isTightMuon_cut_Tight80x_HWWW"};
-   TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight80x = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
+   TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight80x = {fReader, "Lepton_isTightMuon_cut_Tight80x"};*/
+   TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight_HWWW = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
 
    TTreeReaderArray<Float_t> Electron_mvaFall17Iso = {fReader, "Electron_mvaFall17Iso"};
    TTreeReaderArray<Float_t> Electron_mvaFall17noIso = {fReader, "Electron_mvaFall17noIso"};
