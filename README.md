@@ -2,11 +2,12 @@ Small standalone script to calculate both the fake and prompt rates using a gene
 
 # Step 1
 
-It is either possible to run by hand the script runNanoFakes.C on one particular file, or to batch submit several samples at once (from a txt file), using the following command
+It is either possible to run by hand the script runNanoFakes.C on one particular file, or to batch submit several samples at once (from a txt file), using one of the following command ([1] to read directly from a directory the sampples or [2] to read from a txt file)
 
-      python submit-jobs.py -i <samples.txt>
+      python submit-jobs.py -d <full path of the directory> [1]
+      python submit-jobs.py -i <samples.txt> [2]
 
-It is possible to checkthe status of the jobs by using the command 
+It is then possible to check the status of the jobs by using the command 
 
       condor_q      
       watch -n5 condor_q
