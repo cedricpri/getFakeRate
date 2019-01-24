@@ -4,6 +4,7 @@ const Int_t   njetet = 7;
 
 const Float_t muojetarray[njetet] = {10, 15, 20, 25, 30, 35, 45};
 const Float_t elejetarray[njetet] = {10, 15, 20, 25, 30, 35, 45};
+const Float_t colors[njetet] = {kRed, kRed+1, kRed+2, kRed+3, kRed+4, kRed+5, kRed};
 
 const Float_t muoscale = -1.;
 const Float_t elescale = -1.;
@@ -15,7 +16,7 @@ bool    drawone      = false;
 bool    drawall      = true;
 bool    savepng      = true;
 bool    setgrid      = true;
-bool    Wsubtraction = false;
+bool    Wsubtraction = true;
 bool    Zsubtraction = true;
 
 TFile*  dataFR;
@@ -34,6 +35,11 @@ void     Cosmetics (TH1D*       hist,
 		    TString     xtitle,
 		    TString     ytitle,
 		    Color_t     color);
+
+void     DrawAllJetET    (TString     flavour,
+			  TString     variable,
+			  TString     xtitle,
+			  Float_t     lepscale);
 
 void     DrawFR    (TString     flavour,
 		    TString     variable,
@@ -137,8 +143,74 @@ void getFakeRate(TString inputdir_name  = "results/",
     DrawFR("Muon", "eta", "|#eta|",      muoscale, muojetet);
   }
 
+  DrawAllJetET("Ele",  "pt",  "p_{T} [GeV]", elescale); //Used to create a single plot with all the input jet et
+  DrawAllJetET("Ele",  "eta", "|#eta|", elescale);
+  DrawAllJetET("Muon", "pt",  "p_{T} [GeV]", muoscale);
+  DrawAllJetET("Muon", "eta", "|#eta|", muoscale);
+
 }
 
+//------------------------------------------------------------------------------
+// DrawAllJetET
+//------------------------------------------------------------------------------
+void DrawAllJetET(TString flavour,
+		  TString variable,
+		  TString xtitle,
+		  Float_t lepscale)
+{
+
+  Float_t jetet;
+
+  TString title1 = Form("%s fake rate considering various jet p_{T}", flavour.Data());    
+  TCanvas* canvas1 = new TCanvas(title1 + " " + variable, title1 + " " +  variable);
+  
+  canvas1->SetGridx(setgrid);
+  canvas1->SetGridy(setgrid);
+  canvas1->cd();
+
+  for (Int_t i=0; i<njetet; i++) {
+
+    if(flavour == "Ele") {
+      jetet = elejetarray[i];
+    } else {
+      jetet = muojetarray[i];     
+    }
+
+    TString suffix = Form("%s_bin_%.0fGeV", variable.Data(), jetet);
+
+    // Read loose and tight histograms
+    //----------------------------------------------------------------------------
+    TH1D* h_loose_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+    TH1D* h_loose_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+    TH1D* h_loose_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+    TH1D* h_tight_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+    TH1D* h_tight_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+    TH1D* h_tight_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+
+  // Prepare fake rate histograms
+  //----------------------------------------------------------------------------
+    TH1D* h_FR_EWK             = (TH1D*)h_tight_data->Clone("h_" + flavour + "_FR_EWK_"             + variable);
+    TH1D* h_FR_EWK_denominator = (TH1D*)h_loose_data->Clone("h_" + flavour + "_FR_EWK_denominator_" + variable);
+
+    // Do the math
+    //----------------------------------------------------------------------------
+    if (Zsubtraction) h_FR_EWK->Add(h_tight_zjets, lepscale);
+    if (Wsubtraction) h_FR_EWK->Add(h_tight_wjets, lepscale);
+    
+    if (Zsubtraction) h_FR_EWK_denominator->Add(h_loose_zjets, lepscale);
+    if (Wsubtraction) h_FR_EWK_denominator->Add(h_loose_wjets, lepscale);
+    
+    h_FR_EWK->Divide(h_FR_EWK_denominator);
+    h_FR_EWK->SetFillColor(colors[i]);
+
+    Cosmetics(h_FR_EWK, "ep,same", xtitle, title1, kRed+i);
+    DrawLegend(0.22, 0.600+(0.04*i), h_FR_EWK, Form("%.0f GeV threshold", jetet));
+    
+    // Save
+    //----------------------------------------------------------------------------
+  }
+  if (savepng) canvas1->SaveAs(Form("png/%s_FR_%s_combined.png", flavour.Data(), variable.Data()));
+}
 
 //------------------------------------------------------------------------------
 // DrawFR
@@ -208,7 +280,7 @@ void DrawFR(TString flavour,
   Cosmetics(h_FR,     "ep",      xtitle, title1, kBlack);
   Cosmetics(h_FR_EWK, "ep,same", xtitle, title1, kRed+1);
 
-  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.2 fb^{-1} (13 TeV)");
+  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.5 fb^{-1} (13 TeV)");
 
   DrawLegend(0.22, 0.845, h_FR,     "Without EWK correction");
   DrawLegend(0.22, 0.800, h_FR_EWK, "With EWK correction");
@@ -225,7 +297,7 @@ void DrawFR(TString flavour,
 
   Cosmetics(h_EWKrel_tight, "ep", xtitle, title2, kBlack);
 
-  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.2 fb^{-1} (13 TeV)");
+  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.5 fb^{-1} (13 TeV)");
 
 
   // Draw loose EWK correction
@@ -239,7 +311,7 @@ void DrawFR(TString flavour,
 
   Cosmetics(h_EWKrel_loose, "ep", xtitle, title3, kBlack);
 
-  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.2 fb^{-1} (13 TeV)");
+  DrawLatex(42, 0.940, 0.945, 0.045, 31, "41.5 fb^{-1} (13 TeV)");
 
   // Save
   //----------------------------------------------------------------------------
@@ -327,7 +399,7 @@ void WriteFR(TString flavour,
 
   // Write
   //----------------------------------------------------------------------------
-  TFile *file = new TFile(Form("%s/%sFR_Run2017_HWW41fb_jet%0.f.root",
+  TFile *file = new TFile(Form("%s/%sFR_jet%0.f.root",
 			       outputdir.Data(),
 			       flavour.Data(),
 			       jetet),
@@ -360,7 +432,7 @@ void WritePR(TString flavour)
 
   // Write
   //----------------------------------------------------------------------------
-  TFile* file = new TFile(Form("%s/%sPR_Run2017_HWW41fb.root",
+  TFile* file = new TFile(Form("%s/%sPR.root",
 			       outputdir.Data(),
 			       flavour.Data()),
 			  "recreate");
