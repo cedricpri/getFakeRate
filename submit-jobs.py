@@ -22,6 +22,7 @@ def submit():
     parser.add_option('-i', '--input', action='store', type=str, dest='inputFile', default='', help='Name of the txt input file with the samples')
     parser.add_option('-d', '--directory', action='store', type=str, dest='inputDir', default='', help='Name of the directory where the samples can be found')
     parser.add_option('-o', '--output', action='store', type=str, dest='outputDir', default='/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/jobs', help='Output directory')
+    parser.add_option('-t', '--test', action='store', type=float, dest='doNotSend', default=0, help='Do not send the jobs to the queue')
     (opts, args) = parser.parse_args()
 
     #Read the options given
@@ -29,6 +30,7 @@ def submit():
     inputFile = opts.inputFile
     inputDir = opts.inputDir
     outputDir = opts.outputDir
+    doNotSend = opts.doNotSend
 
     if not inputFile:
         if not inputDir:
@@ -39,9 +41,10 @@ def submit():
             sampleFile = open(inputFile, "w+")
             samples = os.listdir(inputDir)
             for name in samples:
-                name = name.replace('nanoLatino_','')
                 name = name.replace('.root','')
-                sampleFile.write(name + "\n")
+                if "DYJetsToLL_M-50__" in name or "WJetsToLNu-LO" in name:
+                #if "DYJetsToLL_M-50__" in name:
+                    sampleFile.write(name + "\n")
 
     if queue not in ['espresso', 'microcentury', 'longlunch', 'workday', 'tomorrow', 'testmatch', 'nextweek']:
         print "Queue not found.... Using tomorrow as default value."
@@ -61,12 +64,12 @@ def submit():
     jobList = []
 
     for sample in input:
-            
-        numberSamples += 1
 
+        numberSamples += 1
+        
         #Check the format of the sample names and correct it if necessary
         if "nanoLatino_" not in sample:
-            sample += sample
+            sample = "nanoLatino_"+sample
             
         if ".root" in sample:
             sample = sample[:-5]
@@ -79,7 +82,7 @@ def submit():
         errFileName = outputDir+sample+".err"
         outFileName = outputDir+sample+".out"
         logFileName = outputDir+sample+".log"
-        #jidFileName = outputDir+sample+".jid"
+        jidFileName = outputDir+sample+".jid"
         
         jobFile = open(jobFileName, "w+")
         jobFile.write("#!/bin/sh \n")
@@ -103,9 +106,9 @@ def submit():
         if not sample in jobList:
             jobList.append(sample)
 
-        #Submission is done for efficiency purposes (send all the jobs at once)
-        #os.system('condor_submit '+subFileName+' > ' +jidFileName)
-        #print "-> File " + sample + " submitted to queue"
+        #Submission is not done here for efficiency purposes (send all the jobs at once)
+        os.system('condor_submit '+subFileName+' > ' +jidFileName)
+        print "-> File " + sample + " submitted to queue"
 
     completeJobFile = open(outputDir+"all.sub", "w+")    
     completeJobFile.write('executable = '+outputDir+'$(JName).sh \n')
@@ -116,13 +119,17 @@ def submit():
     completeJobFile.write('+JobFlavour  = '+ queue +'\n')
     completeJobFile.write('queue JName in (\n')
     for JName in jobList:
-        print JName
-        completeJobFile.write(JName + '\n')
+        #print JName
+        if JName != "" and JName != "\n":
+            completeJobFile.write(JName + '\n')
     completeJobFile.write(')\n')
     
-    #os.system("rm samples/samples_to_be_submitted.txt")
-    #os.system('condor_submit' + outputdir + "all.sub")
-    print "Done! "+ str(numberSamples) +" jobs have been submitted. \n"        
+    if doNotSend == 0:
+        #os.system("rm samples/samples_to_be_submitted.txt")
+        #os.system('condor_submit ' + outputDir + "all.sub")
+        print "Done! "+ str(numberSamples) +" jobs have been submitted. \n"        
+    else:
+        print "Sample file created but jobs not sent to the queue. \n"
 
 if __name__ == "__main__":
     submit()

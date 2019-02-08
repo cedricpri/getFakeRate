@@ -42,7 +42,6 @@ float leptonEtaMax;
 float event_weight;
 float l2tight_weight;
 float deltaR;
-float dxycut;
 
 TLorentzVector tlv1;
 TLorentzVector tlv2;
@@ -252,10 +251,8 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	  
 	  m2l = inv_mass;
 
-	  dxycut = (Lepton_pt[iLep1] <= 20) ? 0.01 : 0.02;
-
 	  //Is the first lepton tight?
-	  if(abs(Lepton_pdgId[iLep1]) == 11 && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[iLep1]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[iLep1]]) < 0.1 && fabs(Electron_dxy[Lepton_electronIdx[iLep1]]) < dxycut) {
+	  if(abs(Lepton_pdgId[iLep1]) == 11 && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[iLep1]] > 0.5) {
 	    
 	    Zlepton1type = Tight;
 	    Zdecayflavour = 11;
@@ -269,11 +266,10 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
 	  }
 
-	  dxycut = (Lepton_pt[iLep2] <= 20) ? 0.01 : 0.02;
 	  leptonIndex = iLep2;
 
 	  //Is the second lepton tight?
-	  if(abs(Lepton_pdgId[iLep2]) == 11 && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[iLep2]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[iLep1]]) < 0.1 && fabs(Electron_dxy[Lepton_electronIdx[iLep2]]) < dxycut) {
+	  if(abs(Lepton_pdgId[iLep2]) == 11 && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[iLep2]] > 0.5) {
 	    
 	    Zlepton2type = Tight;
 	    if(ismc) Zlepton2idisoW = 1.0; //Temporary value until put in the trees
@@ -432,7 +428,6 @@ Bool_t nanoFakes::Process(Long64_t entry)
     
     FillLevelHistograms(FR_00_QCD, i, passJets && passCuts);
 
-    dxycut = (Lepton_pt[0] <= 20) ? 0.01 : 0.02;
     //Loose leptons counter
     if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5) ++nMuonsLooseLowPt;
     if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5) ++nMuonsLooseHighPt;
@@ -442,8 +437,8 @@ Bool_t nanoFakes::Process(Long64_t entry)
     //Tight leptons counter
     if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight_HWWW[0] > 0.5) ++nMuonsTightLowPt;
     if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight_HWWW[0] > 0.5) ++nMuonsTightHighPt;
-    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[0]]) < 0.1 && fabs(Electron_dxy[Lepton_electronIdx[0]]) < dxycut && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
-    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[0]]) < 0.1 && fabs(Electron_dxy[Lepton_electronIdx[0]]) < dxycut && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5 && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5 && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
 
     //Z Region
     passCuts = passTrigger;
@@ -615,8 +610,6 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
     h_Ele_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
     h_Ele_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
     
-    dxycut = (Lepton_pt[0] <= 20) ? 0.01 : 0.02;
-
     if(Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) { //Low pt trigger
       h_Ele_loose_lowpt[icut][i]->Fill(Lepton_pt[0]); //Without weight
       h_Ele_loose_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
@@ -625,7 +618,7 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       h_Ele_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
     }
 
-    if(Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5 && fabs(Electron_dz[Lepton_electronIdx[0]]) < 0.1 && fabs(Electron_dxy[Lepton_electronIdx[0]]) < dxycut) {
+    if(Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5) {
       
       h_Ele_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Ele_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
