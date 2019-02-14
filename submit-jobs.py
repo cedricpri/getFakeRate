@@ -32,6 +32,15 @@ def submit():
     outputDir = opts.outputDir
     doNotSend = opts.doNotSend
 
+    if not os.path.exists("jobs"):
+        os.makedirs("jobs")
+
+    if not os.path.exists("samples"):
+        os.makedirs("samples")
+
+    if not os.path.exists("results"):
+        os.makedirs("results")
+
     if not inputFile:
         if not inputDir:
             print "You have to enter an input file by using the -i option, or a directory using the -d option."
@@ -42,7 +51,7 @@ def submit():
             samples = os.listdir(inputDir)
             for name in samples:
                 name = name.replace('.root','')
-                if "DYJetsToLL_M-50__" in name or "WJetsToLNu-LO" in name:
+                if "DYJetsToLL_M-50__" in name or "WJetsToLNu-LO" in name or "SingleMuon" in name or "DoubleEG" in name:
                 #if "DYJetsToLL_M-50__" in name:
                     sampleFile.write(name + "\n")
 
@@ -51,7 +60,7 @@ def submit():
         queue = "tomorrow"
 
     try:
-        input = open(inputFile, "r")
+        finput = open(inputFile, "r")
         print "Input file successfully read, preparing the job(s) submission..."
         
     except:
@@ -63,10 +72,13 @@ def submit():
 
     jobList = []
 
-    for sample in input:
+    for sample in finput:
+
+        if sample == "" or sample == "\n" or ("part" not in sample):
+            continue
 
         numberSamples += 1
-        
+            
         #Check the format of the sample names and correct it if necessary
         if "nanoLatino_" not in sample:
             sample = "nanoLatino_"+sample
@@ -105,10 +117,9 @@ def submit():
         
         if not sample in jobList:
             jobList.append(sample)
-
         #Submission is not done here for efficiency purposes (send all the jobs at once)
-        os.system('condor_submit '+subFileName+' > ' +jidFileName)
-        print "-> File " + sample + " submitted to queue"
+        #os.system('condor_submit '+subFileName+' > ' +jidFileName)
+        #print "-> File " + sample + " submitted to queue"
 
     completeJobFile = open(outputDir+"all.sub", "w+")    
     completeJobFile.write('executable = '+outputDir+'$(JName).sh \n')
@@ -122,11 +133,12 @@ def submit():
         #print JName
         if JName != "" and JName != "\n":
             completeJobFile.write(JName + '\n')
-    completeJobFile.write(')\n')
-    
+    completeJobFile.write(')')
+    #completeJobFile.write('queue JName from '+inputFile)
+
     if doNotSend == 0:
         #os.system("rm samples/samples_to_be_submitted.txt")
-        #os.system('condor_submit ' + outputDir + "all.sub")
+        os.system('condor_submit ' + outputDir + "all.sub")
         print "Done! "+ str(numberSamples) +" jobs have been submitted. \n"        
     else:
         print "Sample file created but jobs not sent to the queue. \n"
