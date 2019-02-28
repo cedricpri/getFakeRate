@@ -23,6 +23,7 @@ def submit():
     parser.add_option('-d', '--directory', action='store', type=str, dest='inputDir', default='', help='Name of the directory where the samples can be found')
     parser.add_option('-o', '--output', action='store', type=str, dest='outputDir', default='/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/jobs', help='Output directory')
     parser.add_option('-t', '--test', action='store', type=float, dest='doNotSend', default=0, help='Do not send the jobs to the queue')
+    parser.add_option('-y', '--year', action='store', type=str, dest='year', default="", help='Year of the dataset considered (2016, 2017 or 2018)')
     (opts, args) = parser.parse_args()
 
     #Read the options given
@@ -31,7 +32,15 @@ def submit():
     inputDir = opts.inputDir
     outputDir = opts.outputDir
     doNotSend = opts.doNotSend
+    year = opts.year
 
+    if year == "":
+        print "BE CAREFUL! You did not introduce any year, so you considering that you are reading 2016 files by default"
+        year = "2016"
+    elif year != "2016" and year != "2017" and year != "2018":
+        print "The year given does not seem to be valid"
+        return
+        
     if not os.path.exists("jobs"):
         os.makedirs("jobs")
 
@@ -51,8 +60,8 @@ def submit():
             samples = os.listdir(inputDir)
             for name in samples:
                 name = name.replace('.root','')
-                if "DYJetsToLL_M-50__" in name or "WJetsToLNu-LO" in name or "SingleMuon" in name or "DoubleEG" in name:
-                #if "DYJetsToLL_M-50__" in name:
+                if year == "2016" and ("DYJetsToLL_M-50" in name or "WJetsToLNu__" in name or "DoubleMuon" in name or "SingleEle" in name):
+                #if "DYJetsToLL_M-50" in name:
                     sampleFile.write(name + "\n")
 
     if queue not in ['espresso', 'microcentury', 'longlunch', 'workday', 'tomorrow', 'testmatch', 'nextweek']:
@@ -102,7 +111,7 @@ def submit():
         jobFile.write("cd /afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate \n")
         jobFile.write("eval `scramv1 runtime -sh` \n \n")
 
-        jobFile.write("root -l -b -q '/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/runNanoFakes.C(\"" + sample + "\")' \n \n")
+        jobFile.write("root -l -b -q '/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/runNanoFakes.C(\"" + year + "\", \"" + sample + "\")' \n \n")
         jobFile.close()
         
         subFile = open(subFileName, "w+")

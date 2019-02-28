@@ -27,12 +27,14 @@
 #include "nanoFakes.h"
 #include <TStyle.h>
 
+string option;
+TString filename;
+TString year;
+TFile* root_output;
+
 int nentries = 0;
 int maxentries = -1;
 int counter = 0;
-
-TFile* root_output;
-TString filename;
 
 bool ismc;
 int channel;
@@ -61,15 +63,48 @@ int nMuonsTightHighPt = 0;
 void nanoFakes::Begin(TTree * /*tree*/)
 {
 
-  filename = GetOption();
+  option = GetOption(); //Contain the year and the filename
+  year = option.substr(0, 4);
+  filename = option.erase(0,4);
 
-  if (!filename.Contains("Run2017"))
-    {
-      baseW = {fReader, "baseW"};
-      Xsec = {fReader, "Xsec"};
-      puWeight = {fReader, "puWeight"};
-      Generator_weight = {fReader, "Generator_weight"};
-    }
+  //Different WP
+  /*if(year == "2016") {
+
+    Lepton_isTightMuon_cut_Tight80x = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
+    Lepton_isTightElectron_cut_WP_Tight80X = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
+    Lepton_isTightElectron_cut_WP_Tight80X_SS = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X_SS"};
+    Lepton_isTightElectron_mva_90p_Iso2016 = {fReader, "Lepton_isTightElectron_mva_90p_Iso2016"};
+
+    Mu_Tight_WP = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
+    Ele_Tight_WP = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
+
+  } else if(year == "2017") {
+
+    Lepton_isTightMuon_cut_Tight_HWWW = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
+    Electron_mvaFall17Iso_WP90 = {fReader, "Electron_mvaFall17Iso_WP90"};
+    Electron_mvaFall17Iso_WP90_SS = {fReader, "Electron_mvaFall17Iso_WP90_SS"};
+
+    Mu_Tight_WP = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
+    Ele_Tight_WP = {fReader, "Electron_mvaFall17Iso_WP90"};
+
+  } else if(year == "2018") {
+
+    //Add the WP in here
+
+  } else {
+
+    printf("BE CAREFUL! The year entered is not valid \n");
+
+  }*/
+
+  if (!filename.Contains("Run201")) {
+
+    baseW = {fReader, "baseW"};
+    Xsec = {fReader, "Xsec"};
+    puWeight = {fReader, "puWeight"};
+    Generator_weight = {fReader, "Generator_weight"};
+
+  }
 
   root_output = new TFile("/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/results/"+filename+".root", "recreate");
 
@@ -80,7 +115,7 @@ void nanoFakes::Begin(TTree * /*tree*/)
    // The tree argument is deprecated (on PROOF 0 is passed).
 
   //filename = GetOption();
-  //ismc = (filename.Contains("Run2017")) ? false : true;
+  //ismc = (filename.Contains("Run201")) ? false : true;
 
    for (int i=0; i<ncutFR; i++) {
      
@@ -214,8 +249,11 @@ Bool_t nanoFakes::Process(Long64_t entry)
   if (Lepton_pt[0] < leptonPtMin) return 0;
   if (fabs(Lepton_eta[0]) > leptonEtaMax) return 0;
 
-  filename = GetOption();
-  ismc = (filename.Contains("Run2017")) ? false : true;
+  option = GetOption(); //Contain the year and the filename
+  year = option.substr(0, 4);
+  filename = option.erase(0, 4);
+
+  ismc = (filename.Contains("Run201")) ? false : true;
   
   event_weight = 1.0;
 
@@ -252,13 +290,13 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	  m2l = inv_mass;
 
 	  //Is the first lepton tight?
-	  if(abs(Lepton_pdgId[iLep1]) == 11 && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[iLep1]] > 0.5) {
+	  if(abs(Lepton_pdgId[iLep1]) == 11 && Ele_Tight_WP[Lepton_electronIdx[iLep1]] > 0.5) {
 	    
 	    Zlepton1type = Tight;
 	    Zdecayflavour = 11;
 	    if(ismc) Zlepton1idisoW = 1.0; //Temporary value until put in the trees
 
-	  } else if(abs(Lepton_pdgId[iLep1]) == 13 && Lepton_isTightMuon_cut_Tight_HWWW[iLep1] > 0.5) {
+	  } else if(abs(Lepton_pdgId[iLep1]) == 13 && Mu_Tight_WP[iLep1] > 0.5) {
 	  
 	    Zlepton1type = Tight;
 	    Zdecayflavour = 13;
@@ -269,12 +307,12 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	  leptonIndex = iLep2;
 
 	  //Is the second lepton tight?
-	  if(abs(Lepton_pdgId[iLep2]) == 11 && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[iLep2]] > 0.5) {
+	  if(abs(Lepton_pdgId[iLep2]) == 11 && Ele_Tight_WP[Lepton_electronIdx[iLep2]] > 0.5) {
 	    
 	    Zlepton2type = Tight;
 	    if(ismc) Zlepton2idisoW = 1.0; //Temporary value until put in the trees
 
-	  } else if(abs(Lepton_pdgId[iLep2]) == 13 && Lepton_isTightMuon_cut_Tight_HWWW[iLep2] > 0.5) {
+	  } else if(abs(Lepton_pdgId[iLep2]) == 13 && Mu_Tight_WP[iLep2] > 0.5) {
 	  
 	    Zlepton2type = Tight;
 	    if(ismc) Zlepton2idisoW = 1.0; //Temporary value until put in the trees
@@ -435,10 +473,10 @@ Bool_t nanoFakes::Process(Long64_t entry)
     if (passCuts && passJets && i == 3 && channel == e && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsLooseHighPt;
 
     //Tight leptons counter
-    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight_HWWW[0] > 0.5) ++nMuonsTightLowPt;
-    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5 && Lepton_isTightMuon_cut_Tight_HWWW[0] > 0.5) ++nMuonsTightHighPt;
-    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5 && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
-    if (passCuts && passJets && i == 3 && channel == e && Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5 && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] <= 20. && *HLT_Mu8_TrkIsoVVL > 0.5 && Mu_Tight_WP[0] > 0.5) ++nMuonsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == m && Lepton_pt[0] > 20. && *HLT_Mu17_TrkIsoVVL > 0.5 && Mu_Tight_WP[0] > 0.5) ++nMuonsTightHighPt;
+    if (passCuts && passJets && i == 3 && channel == e && Ele_Tight_WP[Lepton_electronIdx[0]] > 0.5 && (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
+    if (passCuts && passJets && i == 3 && channel == e && Ele_Tight_WP[Lepton_electronIdx[0]] > 0.5 && (Lepton_pt[0] > 25. && *HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5)) ++nElectronsTightLowPt;
 
     //Z Region
     passCuts = passTrigger;
@@ -588,7 +626,7 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       h_Muon_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
     }
 
-    if (Lepton_isTightMuon_cut_Tight_HWWW[0] > 0.5) {
+    if (Mu_Tight_WP[0] > 0.5) {
 
       h_Muon_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Muon_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
@@ -618,7 +656,7 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       h_Ele_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
     }
 
-    if(Electron_mvaFall17Iso_WP90[Lepton_electronIdx[0]] > 0.5) {
+    if(Ele_Tight_WP[Lepton_electronIdx[0]] > 0.5) {
       
       h_Ele_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
       h_Ele_tight_pt_bin [icut][i]->Fill(Lepton_pt[0],  event_weight);
