@@ -180,7 +180,7 @@ public :
    TTreeReaderArray<Float_t> CleanJet_phi = {fReader, "CleanJet_phi"};
    
    TTreeReaderValue<Float_t> mtw1 = {fReader, "mtw1"};
-   TTreeReaderValue<Float_t> MET_pt = {fReader, "MET_pt"};
+   TTreeReaderValue<Float_t> PuppiMET_pt = {fReader, "PuppiMET_pt"};
    TTreeReaderValue<Float_t> dphilep1jet1 = {fReader, "dphilep1jet1"};
 
    TTreeReaderValue<Bool_t> HLT_Mu8_TrkIsoVVL = {fReader, "HLT_Mu8_TrkIsoVVL"};
@@ -205,8 +205,8 @@ public :
 
    // -> 2018
 
-   TTreeReaderArray<Bool_t> Mu_Tight_WP = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
-   TTreeReaderArray<Bool_t> Ele_Tight_WP = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
+   TTreeReaderArray<Int_t> Mu_Tight_WP = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
+   TTreeReaderArray<Int_t> Ele_Tight_WP = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
    
 
    nanoFakes(TTree * /*tree*/ =0) { }
