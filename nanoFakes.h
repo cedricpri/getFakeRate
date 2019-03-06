@@ -196,18 +196,18 @@ public :
    TTreeReaderArray<Bool_t> Lepton_isTightMuon_cut_Tight80x;
    TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X;
    TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X_SS;
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_mva_90p_Iso2016;
+   TTreeReaderArray<Bool_t> Lepton_isTightElectron_mva_90p_Iso2016;*/
 
    // -> 2017
-   TTreeReaderArray<Bool_t> Lepton_isTightMuon_cut_Tight_HWWW;
-   TTreeReaderArray<Bool_t> Electron_mvaFall17Iso_WP90;
-   TTreeReaderArray<Bool_t> Electron_mvaFall17Iso_WP90_SS;*/
+   TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight_HWWW = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
+   TTreeReaderArray<Bool_t> Lepton_isTightElectron_mvaFall17Iso_WP90 = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP90"};
+   //TTreeReaderArray<Bool_t> Electron_mvaFall17Iso_WP90_SS;
 
    // -> 2018
 
-   TTreeReaderArray<Int_t> Mu_Tight_WP = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
-   TTreeReaderArray<Int_t> Ele_Tight_WP = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
-   
+   //Here is defined the muon and electron WP
+   //TTreeReaderArray<Int_t> Mu_Tight_WP = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
+   //TTreeReaderArray<Bool_t> Ele_Tight_WP = {fReader, "Electron_mvaFall17Iso_WP90"};
 
    nanoFakes(TTree * /*tree*/ =0) { }
    virtual ~nanoFakes() { }

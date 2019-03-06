@@ -61,8 +61,13 @@ def submit():
             for name in samples:
                 name = name.replace('.root','')
                 if year == "2016" and ("DYJetsToLL_M-50" in name or "WJetsToLNu__" in name or "DoubleMuon" in name or "SingleEle" in name):
-                #if "DYJetsToLL_M-50" in name:
                     sampleFile.write(name + "\n")
+                if year == "2017" and (("DYJetsToLL_M-" in name and "HT" not in name) or "WJetsToLNu-LO__" in name or "Muon" in name or "Electron" in name):
+                    #print name
+                    sampleFile.write(name + "\n")
+                if year == "2018" and ("DYJetsToLL_M-50" in name or "WJetsToLNu" in name or "DoubleMuon" in name or "EleGamme" in name):
+                    sampleFile.write(name + "\n")
+            sampleFile.close()
 
     if queue not in ['espresso', 'microcentury', 'longlunch', 'workday', 'tomorrow', 'testmatch', 'nextweek']:
         print "Queue not found.... Using tomorrow as default value."
@@ -70,6 +75,7 @@ def submit():
 
     try:
         finput = open(inputFile, "r")
+        #print finput.read()
         print "Input file successfully read, preparing the job(s) submission..."
         
     except:
@@ -82,7 +88,7 @@ def submit():
     jobList = []
 
     for sample in finput:
-
+        
         if sample == "" or sample == "\n" or ("part" not in sample):
             continue
 
