@@ -65,7 +65,7 @@ def submit():
                 if year == "2017" and (("DYJetsToLL_M-" in name and "HT" not in name) or "WJetsToLNu-LO__" in name or "Muon" in name or "Electron" in name):
                     #print name
                     sampleFile.write(name + "\n")
-                if year == "2018" and ("DYJetsToLL_M-50" in name or "WJetsToLNu" in name or "DoubleMuon" in name or "EleGamme" in name):
+                if year == "2018" and ("DYJetsToLL_M-50" in name or "WJetsToLNu" in name or "DoubleMuon" in name or "DoubleEG" in name):
                     sampleFile.write(name + "\n")
             sampleFile.close()
 
@@ -148,12 +148,14 @@ def submit():
         #print JName
         if JName != "" and JName != "\n":
             completeJobFile.write(JName + '\n')
-    completeJobFile.write(')')
+    completeJobFile.write(')\n')
     #completeJobFile.write('queue JName from '+inputFile)
+    completeJobFile.close()
 
     if doNotSend == 0:
         #os.system("rm samples/samples_to_be_submitted.txt")
-        os.system('condor_submit ' + outputDir + "all.sub")
+        print outputDir
+        os.system("condor_submit " + outputDir + "all.sub")
         print "Done! "+ str(numberSamples) +" jobs have been submitted. \n"        
     else:
         print "Sample file created but jobs not sent to the queue. \n"

@@ -19,8 +19,6 @@
 #include <TH2.h>
 #include <TLorentzVector.h>
 
-// Headers needed by this particular selector
-
 enum {
   e,
   m,
@@ -50,12 +48,12 @@ const Double_t ptbins[nptbin+1] = {10, 15, 20, 25, 30, 35, 40, 45, 50};
 const int netabin = 5;
 const Double_t etabins[netabin+1] = {0, 0.5, 1.0, 1.5, 2.0, 2.5};
 
-//Z candidate
-int Zlepton1type;
-int Zlepton2type;
+// Z candidate
+int   Zlepton1type;
+int   Zlepton2type;
 float Zlepton1idisoW;
 float Zlepton2idisoW;
-int Zdecayflavour;
+int   Zdecayflavour;
 float m2l;
 
 enum {Loose, Tight};
@@ -80,20 +78,27 @@ const TString scutPR[ncutPR] = {
   "PR/00",
 };
 
-class nanoFakes : public TSelector {
-public :
-   TTreeReader     fReader;  //!the tree reader
-   TTree          *fChain = 0;   //!pointer to the analyzed TTree or TChain
 
-   void FillAnalysisHistograms(int icut,
-			       int     i);
+//------------------------------------------------------------------------------
+// nanoFakes constructor
+//------------------------------------------------------------------------------
+class nanoFakes : public TSelector
+{
+ public :
 
-   void FillLevelHistograms   (int icut,
-			       int     i,
-			       bool    pass);
+  TTreeReader fReader;     //!the tree reader
+  TTree*      fChain = 0;  //!pointer to the analyzed TTree or TChain
+
+  void FillAnalysisHistograms(int  icut,
+			      int  i);
+
+   void FillLevelHistograms  (int  icut,
+			      int  i,
+			      bool pass);
+
 
    // Fake rate histograms 
-   //----------------------------------------------------------------------------
+   //---------------------------------------------------------------------------
    TH2D* h_Muon_loose_pt_eta_bin[ncutFR][njetet];
    TH2D* h_Muon_tight_pt_eta_bin[ncutFR][njetet];
    TH2D* h_Ele_loose_pt_eta_bin [ncutFR][njetet];
@@ -109,40 +114,32 @@ public :
    TH1D* h_Ele_loose_eta_bin [ncutFR][njetet];
    TH1D* h_Ele_tight_eta_bin [ncutFR][njetet];
 
-   TH1D* h_Muon_loose_m2l[ncutFR][njetet];
-   TH1D* h_Muon_tight_m2l[ncutFR][njetet];
-   TH1D* h_Ele_loose_m2l [ncutFR][njetet];
-   TH1D* h_Ele_tight_m2l [ncutFR][njetet];
-
-   // Effective luminosity estimation histograms
-   //----------------------------------------------------------------------------
-   TH2D* h_Muon_loose_pt_m2l[ncutFR][njetet];
-   TH2D* h_Muon_tight_pt_m2l[ncutFR][njetet];
-   TH2D* h_Ele_loose_pt_m2l [ncutFR][njetet];
-   TH2D* h_Ele_tight_pt_m2l [ncutFR][njetet];
 
    // Yields histograms for getYields.C
-   //--------------------------------------------------------------------------
-   TH1D* h_Muon_loose_lowpt[ncutFR][njetet];
-   TH1D* h_Muon_loose_lowpt_weighted[ncutFR][njetet];
+   //---------------------------------------------------------------------------
+   TH1D* h_Muon_loose_lowpt [ncutFR][njetet];
    TH1D* h_Muon_loose_highpt[ncutFR][njetet];
-   TH1D* h_Muon_loose_highpt_weighted[ncutFR][njetet];
-   TH1D* h_Muon_tight_lowpt[ncutFR][njetet];
-   TH1D* h_Muon_tight_lowpt_weighted[ncutFR][njetet];
+   TH1D* h_Muon_tight_lowpt [ncutFR][njetet];
    TH1D* h_Muon_tight_highpt[ncutFR][njetet];
+
+   TH1D* h_Muon_loose_lowpt_weighted [ncutFR][njetet];
+   TH1D* h_Muon_loose_highpt_weighted[ncutFR][njetet];
+   TH1D* h_Muon_tight_lowpt_weighted [ncutFR][njetet];
    TH1D* h_Muon_tight_highpt_weighted[ncutFR][njetet];
 
-   TH1D* h_Ele_loose_lowpt[ncutFR][njetet];
-   TH1D* h_Ele_loose_lowpt_weighted[ncutFR][njetet];
+   TH1D* h_Ele_loose_lowpt [ncutFR][njetet];
    TH1D* h_Ele_loose_highpt[ncutFR][njetet];
-   TH1D* h_Ele_loose_highpt_weighted[ncutFR][njetet];
-   TH1D* h_Ele_tight_lowpt[ncutFR][njetet];
-   TH1D* h_Ele_tight_lowpt_weighted[ncutFR][njetet];
+   TH1D* h_Ele_tight_lowpt [ncutFR][njetet];
    TH1D* h_Ele_tight_highpt[ncutFR][njetet];
+
+   TH1D* h_Ele_loose_lowpt_weighted [ncutFR][njetet];
+   TH1D* h_Ele_loose_highpt_weighted[ncutFR][njetet];
+   TH1D* h_Ele_tight_lowpt_weighted [ncutFR][njetet];
    TH1D* h_Ele_tight_highpt_weighted[ncutFR][njetet];
 
+
    // Prompt rate histograms
-   //--------------------------------------------------------------------------
+   //---------------------------------------------------------------------------
    TH2D* h_Muon_loose_pt_eta_PR[ncutPR];
    TH2D* h_Muon_tight_pt_eta_PR[ncutPR];
    TH2D* h_Ele_loose_pt_eta_PR[ncutPR];
@@ -158,15 +155,17 @@ public :
    TH1D* h_Ele_loose_eta_PR[ncutPR];
    TH1D* h_Ele_tight_eta_PR[ncutPR];
 
-   // Readers to access the data (delete the ones you do not need).
-   //#ifdef IS_MC
+
+   // Readers to access the data (delete the ones you do not need)
+   //---------------------------------------------------------------------------
    TTreeReaderValue<Float_t> baseW;
    TTreeReaderValue<Float_t> Xsec;
    TTreeReaderValue<Float_t> puWeight;
    TTreeReaderValue<Float_t> Generator_weight;
-   //#endif
 
-   //Common variables for 2016, 2017 and 2018
+
+   // Common variables for 2016, 2017 and 2018
+   //---------------------------------------------------------------------------
    TTreeReaderValue<UInt_t> nLepton = {fReader, "nLepton"};
    TTreeReaderArray<Int_t> Lepton_pdgId = {fReader, "Lepton_pdgId"};
    TTreeReaderArray<Float_t> Lepton_pt = {fReader, "Lepton_pt"};
@@ -188,26 +187,20 @@ public :
    TTreeReaderValue<Bool_t> HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 = {fReader, "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30"};
    TTreeReaderValue<Bool_t> HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 = {fReader, "HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30"};
 
-   /*TTreeReaderArray<Bool_t> Mu_Tight_WP;
-   TTreeReaderArray<Bool_t> Ele_Tight_WP;
 
-   //Different electron working points
-   // -> 2016
-   TTreeReaderArray<Bool_t> Lepton_isTightMuon_cut_Tight80x;
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X;
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X_SS;
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_mva_90p_Iso2016;*/
+   //Different electron and muon working points
+   //---------------------------------------------------------------------------
 
-   // -> 2017
+   // 2016
+   //   TTreeReaderArray<Bool_t> Lepton_isTightMuon_cut_Tight80x;
+   //   TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X;
+   //   TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X_SS;
+   //   TTreeReaderArray<Bool_t> Lepton_isTightElectron_mva_90p_Iso2016;*/
+
+   // 2017
    TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight_HWWW = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
    TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP90 = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP90"};
-   //TTreeReaderArray<Bool_t> Electron_mvaFall17Iso_WP90_SS;
 
-   // -> 2018
-
-   //Here is defined the muon and electron WP
-   //TTreeReaderArray<Int_t> Mu_Tight_WP = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
-   //TTreeReaderArray<Bool_t> Ele_Tight_WP = {fReader, "Electron_mvaFall17Iso_WP90"};
 
    nanoFakes(TTree * /*tree*/ =0) { }
    virtual ~nanoFakes() { }
@@ -226,34 +219,41 @@ public :
    virtual void    Terminate();
 
    ClassDef(nanoFakes,0);
-
 };
 
 #endif
 
 #ifdef nanoFakes_cxx
+
+
+//------------------------------------------------------------------------------
+// Init
+//------------------------------------------------------------------------------
 void nanoFakes::Init(TTree *tree)
 {
-   // The Init() function is called when the selector needs to initialize
-   // a new tree or chain. Typically here the reader is initialized.
-   // It is normally not necessary to make changes to the generated
-   // code, but the routine can be extended by the user if needed.
-   // Init() will be called many times when running on PROOF
-   // (once per file to be processed).
-
-   fReader.SetTree(tree);
+  // The Init() function is called when the selector needs to initialize
+  // a new tree or chain. Typically here the reader is initialized.
+  // It is normally not necessary to make changes to the generated
+  // code, but the routine can be extended by the user if needed.
+  // Init() will be called many times when running on PROOF
+  // (once per file to be processed).
+  
+  fReader.SetTree(tree);
 }
 
+
+//------------------------------------------------------------------------------
+// Notify
+//------------------------------------------------------------------------------
 Bool_t nanoFakes::Notify()
 {
-   // The Notify() function is called when a new file is opened. This
-   // can be either for a new TTree in a TChain or when when a new TTree
-   // is started when using PROOF. It is normally not necessary to make changes
-   // to the generated code, but the routine can be extended by the
-   // user if needed. The return value is currently not used.
+  // The Notify() function is called when a new file is opened. This
+  // can be either for a new TTree in a TChain or when when a new TTree
+  // is started when using PROOF. It is normally not necessary to make changes
+  // to the generated code, but the routine can be extended by the
+  // user if needed. The return value is currently not used.
 
-   return kTRUE;
+  return kTRUE;
 }
-
 
 #endif // #ifdef nanoFakes_cxx
