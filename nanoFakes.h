@@ -200,7 +200,7 @@ public :
 
    // -> 2017
    TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight_HWWW = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_mvaFall17Iso_WP90 = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP90"};
+   TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP90 = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP90"};
    //TTreeReaderArray<Bool_t> Electron_mvaFall17Iso_WP90_SS;
 
    // -> 2018
