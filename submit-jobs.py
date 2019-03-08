@@ -22,17 +22,19 @@ def submit():
     parser.add_option('-i', '--input', action='store', type=str, dest='inputFile', default='', help='Name of the txt input file with the samples')
     parser.add_option('-d', '--directory', action='store', type=str, dest='inputDir', default='', help='Name of the directory where the samples can be found')
     parser.add_option('-o', '--output', action='store', type=str, dest='outputDir', default='/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/jobs', help='Output directory')
+    parser.add_option('-w', '--work', action='store', type=str, dest='workDir', default='/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate', help='Working directory')
     parser.add_option('-t', '--test', action='store', type=float, dest='doNotSend', default=0, help='Do not send the jobs to the queue')
     parser.add_option('-y', '--year', action='store', type=str, dest='year', default="", help='Year of the dataset considered (2016, 2017 or 2018)')
     (opts, args) = parser.parse_args()
 
-    #Read the options given
-    queue = opts.queue
+    # Read the options given
+    queue     = opts.queue
     inputFile = opts.inputFile
-    inputDir = opts.inputDir
+    inputDir  = opts.inputDir
     outputDir = opts.outputDir
+    workDir   = opts.workDir
     doNotSend = opts.doNotSend
-    year = opts.year
+    year      = opts.year
 
     if year == "":
         print "BE CAREFUL! You did not introduce any year, so you considering that you are reading 2016 files by default"
@@ -83,7 +85,7 @@ def submit():
         return
 
     numberSamples = 0
-    outputDir = outputDir+"/"
+    outputDir = outputDir + "/"
 
     jobList = []
 
@@ -104,20 +106,20 @@ def submit():
         #Remove strange characters from sample name
         sample = sample.strip(' \t\n\r')
 
-        jobFileName = outputDir+sample+".sh"
-        subFileName = outputDir+sample+".sub"
-        errFileName = outputDir+sample+".err"
-        outFileName = outputDir+sample+".out"
-        logFileName = outputDir+sample+".log"
-        jidFileName = outputDir+sample+".jid"
+        jobFileName = outputDir+sample + ".sh"
+        subFileName = outputDir+sample + ".sub"
+        errFileName = outputDir+sample + ".err"
+        outFileName = outputDir+sample + ".out"
+        logFileName = outputDir+sample + ".log"
+        jidFileName = outputDir+sample + ".jid"
         
         jobFile = open(jobFileName, "w+")
         jobFile.write("#!/bin/sh \n")
         jobFile.write("cd - \n")
-        jobFile.write("cd /afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate \n")
+        jobFile.write("cd " + workDir + "\n")
         jobFile.write("eval `scramv1 runtime -sh` \n \n")
 
-        jobFile.write("root -l -b -q '/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/runNanoFakes.C(\"" + year + "\", \"" + sample + "\")' \n \n")
+        jobFile.write("root -l -b -q '" + workDir + "/runNanoFakes.C(\"" + year + "\", \"" + sample + "\")' \n \n")
         jobFile.close()
         
         subFile = open(subFileName, "w+")

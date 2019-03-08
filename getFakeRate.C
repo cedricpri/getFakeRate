@@ -30,49 +30,50 @@ TString outputdir;
 
 // Functions
 //------------------------------------------------------------------------------
-void     Cosmetics (TH1D*       hist,
-		    Option_t*   option,
-		    TString     xtitle,
-		    TString     ytitle,
-		    Color_t     color);
+void     Cosmetics   (TH1D*       hist,
+		      Option_t*   option,
+		      TString     xtitle,
+		      TString     ytitle,
+		      Color_t     color);
 
-void     DrawAllJetET    (TString     flavour,
-			  TString     variable,
-			  TString     xtitle,
-			  Float_t     lepscale);
+void     DrawAllJetET(TString     flavour,
+		      TString     variable,
+		      TString     xtitle,
+		      Float_t     lepscale);
 
-void     DrawFR    (TString     flavour,
-		    TString     variable,
-		    TString     xtitle,
-		    Float_t     lepscale,
-		    Float_t     jetet);
+void     DrawFR      (TString     flavour,
+		      TString     variable,
+		      TString     xtitle,
+		      Float_t     lepscale,
+		      Float_t     jetet);
 
-void     DrawPR    (TString     flavour,
-		    TString     variable,
-		    TString     xtitle);
+void     DrawPR      (TString     flavour,
+		      TString     variable,
+		      TString     xtitle);
 
-void     WriteFR   (TString     flavour,
-		    Float_t     lepscale,
-		    Float_t     jetet);
+void     WriteFR     (TString     flavour,
+		      Float_t     lepscale,
+		      Float_t     jetet);
 
-void     WritePR   (TString     flavour);
+void     WritePR     (TString     flavour);
 
-void     DrawLatex (Font_t      tfont,
-		    Float_t     x,
-		    Float_t     y,
-		    Float_t     tsize,
-		    Short_t     align,
-		    const char* text,
-		    Bool_t      setndc = true);
+void     DrawLatex   (Font_t      tfont,
+		      Float_t     x,
+		      Float_t     y,
+		      Float_t     tsize,
+		      Short_t     align,
+		      const char* text,
+		      Bool_t      setndc = true);
 
-TLegend* DrawLegend(Float_t     x1,
-		    Float_t     y1,
-		    TH1*        hist,
-		    TString     label,
-		    TString     option  = "p",
-		    Float_t     tsize   = 0.035,
-		    Float_t     xoffset = 0.184,
-		    Float_t     yoffset = 0.043);
+TLegend* DrawLegend  (Float_t     x1,
+		      Float_t     y1,
+		      TH1*        hist,
+		      TString     label,
+		      TString     option  = "p",
+		      Float_t     tsize   = 0.035,
+		      Float_t     xoffset = 0.184,
+		      Float_t     yoffset = 0.043);
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //
@@ -123,13 +124,13 @@ void getFakeRate(TString inputdir_name  = "results/",
     WriteFR("Ele",  elescale, elejetet);
     WriteFR("Muon", muoscale, muojetet);
 
-    if(drawone && i == 3) { //We are mostly interested in Jetet > 25 GeV for electrons
+    if(drawone && i == 3) {  // We are mostly interested in Jetet > 25 GeV for electrons
 
       DrawFR("Ele",  "pt",  "p_{T} [GeV]", elescale, elejetet);
       DrawFR("Ele",  "eta", "|#eta|",      elescale, elejetet);
     }
 
-    if(drawone && i == 3) { //We are mostly interested in Jetet > 25 GeV for muons
+    if(drawone && i == 3) {  // We are mostly interested in Jetet > 25 GeV for muons
       DrawFR("Muon", "pt",  "p_{T} [GeV]", muoscale, muojetet);
       DrawFR("Muon", "eta", "|#eta|",      muoscale, muojetet);
     }
@@ -143,12 +144,12 @@ void getFakeRate(TString inputdir_name  = "results/",
     DrawFR("Muon", "eta", "|#eta|",      muoscale, muojetet);
   }
 
-  DrawAllJetET("Ele",  "pt",  "p_{T} [GeV]", elescale); //Used to create a single plot with all the input jet et
+  DrawAllJetET("Ele",  "pt",  "p_{T} [GeV]", elescale);  // Used to create a single plot with all the input jet et
   DrawAllJetET("Ele",  "eta", "|#eta|", elescale);
   DrawAllJetET("Muon", "pt",  "p_{T} [GeV]", muoscale);
   DrawAllJetET("Muon", "eta", "|#eta|", muoscale);
-
 }
+
 
 //------------------------------------------------------------------------------
 // DrawAllJetET

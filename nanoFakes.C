@@ -107,6 +107,17 @@ void nanoFakes::Begin(TTree*)
       h_Ele_loose_eta_bin [i][j] = new TH1D("h_Ele_loose_eta_bin"  + elesuffix,  "", netabin, etabins);
       h_Ele_tight_eta_bin [i][j] = new TH1D("h_Ele_tight_eta_bin"  + elesuffix,  "", netabin, etabins);
 
+       h_Muon_loose_m2l[i][j] = new TH1D("h_Muon_loose_m2l" + muonsuffix, "", 1000, 0, 200);
+       h_Muon_tight_m2l[i][j] = new TH1D("h_Muon_tight_m2l" + muonsuffix, "", 1000, 0, 200);
+       h_Ele_loose_m2l [i][j] = new TH1D("h_Ele_loose_m2l"  + elesuffix,  "", 1000, 0, 200);
+       h_Ele_tight_m2l [i][j] = new TH1D("h_Ele_tight_m2l"  + elesuffix,  "", 1000, 0, 200);
+          
+       // Define effective luminosity estimation histograms
+       //------------------------------------------------------------------------
+       h_Muon_loose_pt_m2l[i][j] = new TH2D("h_Muon_loose_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+       h_Muon_tight_pt_m2l[i][j] = new TH2D("h_Muon_tight_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+       h_Ele_loose_pt_m2l [i][j] = new TH2D("h_Ele_loose_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+       h_Ele_tight_pt_m2l [i][j] = new TH2D("h_Ele_tight_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
 
       // Yields histograms for getYields.C
       //------------------------------------------------------------------------
@@ -259,13 +270,9 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	  leptonIndex = iLep2;
 	  
 	  // Is the second lepton tight?
-	  if (abs(Lepton_pdgId[iLep2]) == 11 && Lepton_isTightElectron_mvaFall17Iso_WP90[iLep2] > 0.5) {
+	  if ((abs(Lepton_pdgId[iLep2]) == 11 && Lepton_isTightElectron_mvaFall17Iso_WP90[iLep2] > 0.5) ||
+	      (abs(Lepton_pdgId[iLep2]) == 13 && Lepton_isTightMuon_cut_Tight_HWWW[iLep2] > 0.5)) {
 	    
-	    Zlepton2type   = Tight;
-	    Zlepton2idisoW = 1.0;  // Temporary value until put in the trees
-
-	  } else if (abs(Lepton_pdgId[iLep2]) == 13 && Lepton_isTightMuon_cut_Tight_HWWW[iLep2] > 0.5) {
-	  
 	    Zlepton2type   = Tight;
 	    Zlepton2idisoW = 1.0;  // Temporary value until put in the trees
 	  }
@@ -395,6 +402,32 @@ Bool_t nanoFakes::Process(Long64_t entry)
       passCuts &= (*nLepton > 1);
       passCuts &= (*PuppiMET_pt < 20.);
       passCuts &= (m2l > 20.);
+
+            if(passJets && passCuts) {
+	
+	if (fabs(Zdecayflavour) == 11) {
+	  
+	  h_Ele_loose_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight);
+	  h_Ele_loose_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight);
+	  
+	  if (Zlepton1type == Tight && Zlepton2type == Tight) {
+	    
+	    h_Ele_tight_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight * l2tight_weight);
+	    h_Ele_tight_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	  }
+	}
+	else if (fabs(Zdecayflavour) == 13) {
+	  
+	  h_Muon_loose_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight);
+	  h_Muon_loose_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight);
+	  
+	  if (Zlepton1type == Tight && Zlepton2type == Tight) {
+	    
+	    h_Muon_tight_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight * l2tight_weight);
+	    h_Muon_tight_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	  }
+	}
+      }
 
       FillLevelHistograms(FR_01_Zpeak, i, passJets && passCuts);
     }

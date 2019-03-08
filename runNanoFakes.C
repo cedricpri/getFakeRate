@@ -58,7 +58,6 @@ void runNanoFakes(TString year = "2017", TString filename = "NONE")
 
   mychain->Add(path + filename + ".root");
 
-//printf("\n Executing mychain->Process(\"/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/nanoFakes.C+\")...\n\n");
   printf("\n Executing mychain->Process(\"nanoFakes.C+\")...\n\n");
 
   TString option = year + filename;
