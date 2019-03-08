@@ -62,8 +62,7 @@ def submit():
                 name = name.replace('.root','')
                 if year == "2016" and ("DYJetsToLL_M-50" in name or "WJetsToLNu__" in name or "DoubleMuon" in name or "SingleEle" in name):
                     sampleFile.write(name + "\n")
-                    if year == "2017" and (("DYJetsToLL_M-50__" in name and "HT" not in name) or "DYJetsToLL_M-10to50-LO__" in name or "WJetsToLNu-LO__" in name or "DoubleMuon" in na\
-me or "SingleElectron" in name):
+                if year == "2017" and (("DYJetsToLL_M-50__" in name and "HT" not in name) or "DYJetsToLL_M-10to50-LO__" in name or "WJetsToLNu-LO__" in name or "DoubleMuon" in name or "SingleElectron" in name):
                     #print name
                     sampleFile.write(name + "\n")
                 if year == "2018" and ("DYJetsToLL_M-50" in name or "WJetsToLNu" in name or "DoubleMuon" in name or "DoubleEG" in name):

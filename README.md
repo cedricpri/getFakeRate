@@ -28,7 +28,8 @@ It is possible to check the status of the jobs by using the command
 
 # Step 2
 
-Once all the jobs are done, two different options are available.
+Once all the jobs are done, an hadd is necessary. At the end, you should have three files in the results directory, called hadd_data.root, hadd_wjets.root and hadd_zjets.root 
+Two different options are then available.
 
 ## getFakeRate.C
 
