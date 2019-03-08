@@ -66,7 +66,6 @@ void nanoFakes::Begin(TTree*)
 
   ismc = (filename.Contains("Run201")) ? false : true;
 
-//root_output = new TFile("/afs/cern.ch/user/c/cprieels/work/public/Fakes/CMSSW_10_1_0/src/getFakeRate/results/"+filename+".root", "recreate");
   root_output = new TFile("results/" + filename + ".root", "recreate");
 
   TH1::SetDefaultSumw2();
@@ -107,17 +106,19 @@ void nanoFakes::Begin(TTree*)
       h_Ele_loose_eta_bin [i][j] = new TH1D("h_Ele_loose_eta_bin"  + elesuffix,  "", netabin, etabins);
       h_Ele_tight_eta_bin [i][j] = new TH1D("h_Ele_tight_eta_bin"  + elesuffix,  "", netabin, etabins);
 
-       h_Muon_loose_m2l[i][j] = new TH1D("h_Muon_loose_m2l" + muonsuffix, "", 1000, 0, 200);
-       h_Muon_tight_m2l[i][j] = new TH1D("h_Muon_tight_m2l" + muonsuffix, "", 1000, 0, 200);
-       h_Ele_loose_m2l [i][j] = new TH1D("h_Ele_loose_m2l"  + elesuffix,  "", 1000, 0, 200);
-       h_Ele_tight_m2l [i][j] = new TH1D("h_Ele_tight_m2l"  + elesuffix,  "", 1000, 0, 200);
+      
+      // Effective luminosity estimation histograms
+      //------------------------------------------------------------------------
+      h_Muon_loose_m2l[i][j] = new TH1D("h_Muon_loose_m2l" + muonsuffix, "", 1000, 0, 200);
+      h_Muon_tight_m2l[i][j] = new TH1D("h_Muon_tight_m2l" + muonsuffix, "", 1000, 0, 200);
+      h_Ele_loose_m2l [i][j] = new TH1D("h_Ele_loose_m2l"  + elesuffix,  "", 1000, 0, 200);
+      h_Ele_tight_m2l [i][j] = new TH1D("h_Ele_tight_m2l"  + elesuffix,  "", 1000, 0, 200);
           
-       // Define effective luminosity estimation histograms
-       //------------------------------------------------------------------------
-       h_Muon_loose_pt_m2l[i][j] = new TH2D("h_Muon_loose_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
-       h_Muon_tight_pt_m2l[i][j] = new TH2D("h_Muon_tight_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
-       h_Ele_loose_pt_m2l [i][j] = new TH2D("h_Ele_loose_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
-       h_Ele_tight_pt_m2l [i][j] = new TH2D("h_Ele_tight_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+      h_Muon_loose_pt_m2l[i][j] = new TH2D("h_Muon_loose_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+      h_Muon_tight_pt_m2l[i][j] = new TH2D("h_Muon_tight_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+      h_Ele_loose_pt_m2l [i][j] = new TH2D("h_Ele_loose_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+      h_Ele_tight_pt_m2l [i][j] = new TH2D("h_Ele_tight_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+
 
       // Yields histograms for getYields.C
       //------------------------------------------------------------------------
@@ -246,8 +247,6 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	Zdecayflavour  = abs(Lepton_pdgId[iLep1]);
 	Zlepton1idisoW = 1.0;  // Temporary value until put in the trees
       }
-
-      if (Zlepton1type == Loose) continue;
 
       for (unsigned int iLep2=iLep1+1; iLep2<*nLepton; iLep2++) {
 	
@@ -403,7 +402,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
       passCuts &= (*PuppiMET_pt < 20.);
       passCuts &= (m2l > 20.);
 
-            if(passJets && passCuts) {
+      if (passJets && passCuts) {
 	
 	if (fabs(Zdecayflavour) == 11) {
 	  

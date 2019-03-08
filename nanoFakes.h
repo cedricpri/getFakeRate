@@ -97,7 +97,7 @@ class nanoFakes : public TSelector
 			      bool pass);
 
 
-   // Fake rate histograms 
+   // Fake rate histograms
    //---------------------------------------------------------------------------
    TH2D* h_Muon_loose_pt_eta_bin[ncutFR][njetet];
    TH2D* h_Muon_tight_pt_eta_bin[ncutFR][njetet];
@@ -113,6 +113,19 @@ class nanoFakes : public TSelector
    TH1D* h_Muon_tight_eta_bin[ncutFR][njetet];
    TH1D* h_Ele_loose_eta_bin [ncutFR][njetet];
    TH1D* h_Ele_tight_eta_bin [ncutFR][njetet];
+
+
+   // Effective luminosity estimation histograms
+   //---------------------------------------------------------------------------
+   TH1D* h_Muon_loose_m2l[ncutFR][njetet];
+   TH1D* h_Muon_tight_m2l[ncutFR][njetet];
+   TH1D* h_Ele_loose_m2l [ncutFR][njetet];
+   TH1D* h_Ele_tight_m2l [ncutFR][njetet];
+   
+   TH2D* h_Muon_loose_pt_m2l[ncutFR][njetet];
+   TH2D* h_Muon_tight_pt_m2l[ncutFR][njetet];
+   TH2D* h_Ele_loose_pt_m2l [ncutFR][njetet];
+   TH2D* h_Ele_tight_pt_m2l [ncutFR][njetet];
 
 
    // Yields histograms for getYields.C
