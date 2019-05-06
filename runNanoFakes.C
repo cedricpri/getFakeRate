@@ -21,8 +21,8 @@ void runNanoFakes(TString year = "2017", TString filename = "NONE")
 {
   if (year == "2016")
     {
-      path_mc   = "/eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Summer16_94X_nAODv3_Full2016v2/MCl1loose2016__MCCorr2016/";
-      path_data = "/eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Run2016_94X_nAODv3_Full2016v2/DATAl1loose2016/";
+      path_mc   = "/eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Summer16_102X_nAODv4_Full2016v4/MCl1loose2016__MCCorr2016__fakeSelMC/";
+      path_data = "/eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Run2016_102X_nAODv4_Full2016v4/DATAl1loose2016__fakeSel/";
     }
   else if (year == "2017")
     {
