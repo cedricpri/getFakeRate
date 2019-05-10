@@ -9,14 +9,7 @@ It is possible to run by hand the script `runNanoFakes.C` on one particular file
 
 The normal thing to do is to batch submit several samples at once. The batch submission can be done reading the samples directly from a directory.
 
-    python submit-jobs.py -d <full path of the directory>
-
-The batch submission can also be done reading the samples from a txt file
-
-    python submit-jobs.py -o $PWD/jobs -w $PWD -y 2017 -d /eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Fall2017_nAOD_v1_Full2017v2/MCl1loose2017v2__MCCorr2017__btagPerEvent/
-    python submit-jobs.py -o $PWD/jobs -w $PWD -y 2017 -d /eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Run2017_nAOD_v1_Full2017v2/DATAl1loose2017v2__DATACorr2017/
-
-The <samples.txt> file should only contain one sample per line, and should include the prefix "nanoLatino_" but NOT the complete path, which is defined in `runNanoFakes.C`. Watch out that an empty directory called "results" should be present beforehand in your working directory to keep the output of the jobs sent.
+    python submitJobs.py -d <full path of the directory>
 
 
 # Check job status
