@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
 //
 //      Target: Produce fake and prompt rates
-//     Authors: Jonatan Piedra, Cedric Prieels
-// Last update: March 7th, 2019
+//      Authors: Jonatan Piedra, Cedric Prieels
+//      Last update: May 10th, 2019
 //
 //------------------------------------------------------------------------------
 TString path_mc   = "";
@@ -17,7 +17,7 @@ std::string to_string(int i)
 }
 
 
-void runNanoFakes(TString year = "2017", TString filename = "NONE")
+void runNanoFakes(TString year = "2016", TString filename = "NONE")
 {
   if (year == "2016")
     {

@@ -45,11 +45,15 @@ const Double_t elejetet [njetet] = {10, 15, 20, 25, 30, 35, 45};
 const int nptbin = 8;
 const Double_t ptbins[nptbin+1] = {10, 15, 20, 25, 30, 35, 40, 45, 50};
 
-const int nconvbin = 4;
-const Double_t convbins[nconvbin+1] = {0, 1, 2, 3, 4};
-
 const int netabin = 5;
 const Double_t etabins[netabin+1] = {0, 0.5, 1.0, 1.5, 2.0, 2.5};
+
+//Btag division                                                                        
+const int nbtag = 4;
+const TString btags[nbtag] = {"", "bveto", "loose", "mediumtight"};
+float btagDown = 0.0;
+float btagUp = 1.0;
+TString btagDirectory = "";
 
 // Z candidate
 int   Zlepton1type;
@@ -80,7 +84,6 @@ enum {
 const TString scutPR[ncutPR] = {
   "PR/00",
 };
-
 
 //------------------------------------------------------------------------------
 // nanoFakes constructor
@@ -193,7 +196,12 @@ class nanoFakes : public TSelector
    //TTreeReaderArray<Float_t> Electron_lostHits = {fReader, "Electron_lostHits"};
    TTreeReaderArray<Float_t> Lepton_eta = {fReader, "Lepton_eta"};
    TTreeReaderArray<Float_t> Lepton_phi = {fReader, "Lepton_phi"};
+
+   TTreeReaderArray<Float_t> Jet_btagDeepB = {fReader, "Jet_btagDeepB"};
+   TTreeReaderArray<Int_t> Lepton_muonIdx = {fReader, "Lepton_muonIdx"};
+   TTreeReaderArray<Int_t> Muon_jetIdx = {fReader, "Muon_jetIdx"};
    TTreeReaderArray<Int_t> Lepton_electronIdx = {fReader, "Lepton_electronIdx"};
+   TTreeReaderArray<Int_t> Electron_jetIdx = {fReader, "Electron_jetIdx"};
 
    TTreeReaderValue<UInt_t> nCleanJet = {fReader, "nCleanJet"};
    TTreeReaderArray<Float_t> CleanJet_pt = {fReader, "CleanJet_pt"};
