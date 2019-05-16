@@ -17,7 +17,7 @@ std::string to_string(int i)
 }
 
 
-void runNanoFakes(TString year = "2016", TString filename = "NONE")
+void runNanoFakes(TString year = "2017", TString filename = "NONE")
 {
   if (year == "2016")
     {
@@ -31,8 +31,8 @@ void runNanoFakes(TString year = "2016", TString filename = "NONE")
     }
   else if (year == "2018")
     {
-      path_mc   = "";  // Not yet available
-      path_data = "/eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Run2018_102X_nAODv4_14Sep_Full2018/DATAl1loose2018__fakeSel/";
+      path_mc   = "/eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Autumn18_102X_nAODv4_GTv16_Full2018v4/MCl1loose2018__fakeSelKinMC/";
+      path_data = "/eos/cms/store/group/phys_higgs/cmshww/amassiro/HWWNano/Run2018_102X_nAODv4_14Dec_Full2018v4/DATAl1loose2018__fakeSel/";
     }
   else
     {

@@ -105,61 +105,61 @@ class nanoFakes : public TSelector
 
    // Fake rate histograms
    //---------------------------------------------------------------------------
-   TH2D* h_Muon_loose_pt_eta_bin[ncutFR][njetet];
-   TH2D* h_Muon_tight_pt_eta_bin[ncutFR][njetet];
-   TH2D* h_Ele_loose_pt_eta_bin [ncutFR][njetet];
-   TH2D* h_Ele_tight_pt_eta_bin [ncutFR][njetet];
+   TH2D* h_Muon_loose_pt_eta_bin[ncutFR][njetet][nbtag];
+   TH2D* h_Muon_tight_pt_eta_bin[ncutFR][njetet][nbtag];
+   TH2D* h_Ele_loose_pt_eta_bin [ncutFR][njetet][nbtag];
+   TH2D* h_Ele_tight_pt_eta_bin [ncutFR][njetet][nbtag];
 
-   TH1D* h_Muon_loose_pt_bin[ncutFR][njetet];
-   TH1D* h_Muon_tight_pt_bin[ncutFR][njetet];
-   TH1D* h_Ele_loose_pt_bin [ncutFR][njetet];
-   TH1D* h_Ele_tight_pt_bin [ncutFR][njetet];
+   TH1D* h_Muon_loose_pt_bin[ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_pt_bin[ncutFR][njetet][nbtag];
+   TH1D* h_Ele_loose_pt_bin [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_pt_bin [ncutFR][njetet][nbtag];
 
-   TH1D* h_Muon_loose_conv_bin[ncutFR][njetet];
-   TH1D* h_Muon_tight_conv_bin[ncutFR][njetet];
-   TH1D* h_Ele_loose_conv_bin [ncutFR][njetet];
-   TH1D* h_Ele_tight_conv_bin [ncutFR][njetet];
+   TH1D* h_Muon_loose_conv_bin[ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_conv_bin[ncutFR][njetet][nbtag];
+   TH1D* h_Ele_loose_conv_bin [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_conv_bin [ncutFR][njetet][nbtag];
 
-   TH1D* h_Muon_loose_eta_bin[ncutFR][njetet];
-   TH1D* h_Muon_tight_eta_bin[ncutFR][njetet];
-   TH1D* h_Ele_loose_eta_bin [ncutFR][njetet];
-   TH1D* h_Ele_tight_eta_bin [ncutFR][njetet];
+   TH1D* h_Muon_loose_eta_bin[ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_eta_bin[ncutFR][njetet][nbtag];
+   TH1D* h_Ele_loose_eta_bin [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_eta_bin [ncutFR][njetet][nbtag];
 
 
    // Effective luminosity estimation histograms
    //---------------------------------------------------------------------------
-   TH1D* h_Muon_loose_m2l[ncutFR][njetet];
-   TH1D* h_Muon_tight_m2l[ncutFR][njetet];
-   TH1D* h_Ele_loose_m2l [ncutFR][njetet];
-   TH1D* h_Ele_tight_m2l [ncutFR][njetet];
+   TH1D* h_Muon_loose_m2l[ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_m2l[ncutFR][njetet][nbtag];
+   TH1D* h_Ele_loose_m2l [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_m2l [ncutFR][njetet][nbtag];
    
-   TH2D* h_Muon_loose_pt_m2l[ncutFR][njetet];
-   TH2D* h_Muon_tight_pt_m2l[ncutFR][njetet];
-   TH2D* h_Ele_loose_pt_m2l [ncutFR][njetet];
-   TH2D* h_Ele_tight_pt_m2l [ncutFR][njetet];
+   TH2D* h_Muon_loose_pt_m2l[ncutFR][njetet][nbtag];
+   TH2D* h_Muon_tight_pt_m2l[ncutFR][njetet][nbtag];
+   TH2D* h_Ele_loose_pt_m2l [ncutFR][njetet][nbtag];
+   TH2D* h_Ele_tight_pt_m2l [ncutFR][njetet][nbtag];
 
 
    // Yields histograms for getYields.C
    //---------------------------------------------------------------------------
-   TH1D* h_Muon_loose_lowpt [ncutFR][njetet];
-   TH1D* h_Muon_loose_highpt[ncutFR][njetet];
-   TH1D* h_Muon_tight_lowpt [ncutFR][njetet];
-   TH1D* h_Muon_tight_highpt[ncutFR][njetet];
+   TH1D* h_Muon_loose_lowpt [ncutFR][njetet][nbtag];
+   TH1D* h_Muon_loose_highpt[ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_lowpt [ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_highpt[ncutFR][njetet][nbtag];
 
-   TH1D* h_Muon_loose_lowpt_weighted [ncutFR][njetet];
-   TH1D* h_Muon_loose_highpt_weighted[ncutFR][njetet];
-   TH1D* h_Muon_tight_lowpt_weighted [ncutFR][njetet];
-   TH1D* h_Muon_tight_highpt_weighted[ncutFR][njetet];
+   TH1D* h_Muon_loose_lowpt_weighted [ncutFR][njetet][nbtag];
+   TH1D* h_Muon_loose_highpt_weighted[ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_lowpt_weighted [ncutFR][njetet][nbtag];
+   TH1D* h_Muon_tight_highpt_weighted[ncutFR][njetet][nbtag];
 
-   TH1D* h_Ele_loose_lowpt [ncutFR][njetet];
-   TH1D* h_Ele_loose_highpt[ncutFR][njetet];
-   TH1D* h_Ele_tight_lowpt [ncutFR][njetet];
-   TH1D* h_Ele_tight_highpt[ncutFR][njetet];
+   TH1D* h_Ele_loose_lowpt [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_loose_highpt[ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_lowpt [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_highpt[ncutFR][njetet][nbtag];
 
-   TH1D* h_Ele_loose_lowpt_weighted [ncutFR][njetet];
-   TH1D* h_Ele_loose_highpt_weighted[ncutFR][njetet];
-   TH1D* h_Ele_tight_lowpt_weighted [ncutFR][njetet];
-   TH1D* h_Ele_tight_highpt_weighted[ncutFR][njetet];
+   TH1D* h_Ele_loose_lowpt_weighted [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_loose_highpt_weighted[ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_lowpt_weighted [ncutFR][njetet][nbtag];
+   TH1D* h_Ele_tight_highpt_weighted[ncutFR][njetet][nbtag];
 
 
    // Prompt rate histograms
@@ -214,6 +214,7 @@ class nanoFakes : public TSelector
 
    TTreeReaderValue<Bool_t> HLT_Mu8_TrkIsoVVL = {fReader, "HLT_Mu8_TrkIsoVVL"};
    TTreeReaderValue<Bool_t> HLT_Mu17_TrkIsoVVL = {fReader, "HLT_Mu17_TrkIsoVVL"};
+   TTreeReaderValue<Bool_t> HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30 = {fReader, "HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30"};
    TTreeReaderValue<Bool_t> HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 = {fReader, "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30"};
    TTreeReaderValue<Bool_t> HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 = {fReader, "HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30"};
 
@@ -233,8 +234,12 @@ class nanoFakes : public TSelector
    //TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP90 = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP90"};
    TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP90;*/
 
-   TTreeReaderArray<Int_t> muonTightWP = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
-   TTreeReaderArray<Int_t> eleTightWP = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
+   // 2018
+   //Lepton_isTightMuon_cut_Tight_HWWW
+   //Lepton_isTightElectron_mvaFall17V1Iso_WP90
+
+   TTreeReaderArray<Int_t> muonTightWP = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
+   TTreeReaderArray<Int_t> eleTightWP = {fReader, "Lepton_isTightElectron_mvaFall17V1Iso_WP90"};
 
    nanoFakes(TTree * /*tree*/ =0) { }
    virtual ~nanoFakes() { }

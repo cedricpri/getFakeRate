@@ -77,18 +77,19 @@ void nanoFakes::Begin(TTree*)
   if(year == "2016") {
     eleLowPtPrescale = 14.851;
     eleHighPtPrescale = 62.808;
-    muonLowPtPrescale = 3.937;
-    muonHighPtPrescale = 282.781;
+    muonLowPtPrescale = 7.801;
+    muonHighPtPrescale = 216.748;
   } else if(year == "2017") {
     eleLowPtPrescale = 27.699;
     eleHighPtPrescale = 43.469;
     muonLowPtPrescale = 2.903;
     muonHighPtPrescale = 65.944;
   } else if(year == "2018") {
-    /*eleLowPtPrescale = ;
-    eleHighPtPrescale = ;
-    muonLowPtPrescale = ;
-    muonHighPtPrescale = ;*/
+    eleLowPtPrescale = 6.412; //Ele8
+    //eleLowPtPrescale = 38.849; //Ele12
+    eleHighPtPrescale = 38.906;
+    muonLowPtPrescale = 8.561;
+    muonHighPtPrescale = 45.781;
   }
 
   //Tight Ele and mu WP definition
@@ -106,7 +107,7 @@ void nanoFakes::Begin(TTree*)
     eleTightWP = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
     }*/
 
-  for (int btag = 0; btag < nbtag ; btag ++) {
+  for (int btag = 0; btag < nbtag ; btag ++) {	  	
   // FR regions
   //----------------------------------------------------------------------------
     
@@ -115,110 +116,105 @@ void nanoFakes::Begin(TTree*)
     gDirectory->mkdir(btagDirectory);
     root_output->cd(btagDirectory);
 
-      for (int i=0; i<ncutFR; i++) {
+    for (int i=0; i<ncutFR; i++) {
 	
-	TString directory = scutFR[i];
-
-	root_output->cd();
-	root_output->cd(btagDirectory);
-	gDirectory->mkdir(directory);
-	root_output->cd(btagDirectory+"/"+directory);
-	
-	for (int j=0; j<njetet; j++) {
-	  
-	  TString muonsuffix = Form("_%.0fGeV", muonjetet[j]);
-	  TString elesuffix  = Form("_%.0fGeV", elejetet[j]);
-	  
-	  
-	  // Fake rate histograms
-	  //------------------------------------------------------------------------
-	  h_Muon_loose_pt_eta_bin[i][j] = new TH2D("h_Muon_loose_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
-	  h_Muon_tight_pt_eta_bin[i][j] = new TH2D("h_Muon_tight_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
-	  h_Ele_loose_pt_eta_bin [i][j] = new TH2D("h_Ele_loose_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
-	  h_Ele_tight_pt_eta_bin [i][j] = new TH2D("h_Ele_tight_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
-	  
-	  h_Muon_loose_pt_bin[i][j] = new TH1D("h_Muon_loose_pt_bin" + muonsuffix, "", nptbin, ptbins);
-	  h_Muon_tight_pt_bin[i][j] = new TH1D("h_Muon_tight_pt_bin" + muonsuffix, "", nptbin, ptbins);
-	  h_Ele_loose_pt_bin [i][j] = new TH1D("h_Ele_loose_pt_bin"  + elesuffix,  "", nptbin, ptbins);
-	  h_Ele_tight_pt_bin [i][j] = new TH1D("h_Ele_tight_pt_bin"  + elesuffix,  "", nptbin, ptbins);
-	  
-	  h_Muon_loose_eta_bin[i][j] = new TH1D("h_Muon_loose_eta_bin" + muonsuffix, "", netabin, etabins);
-	  h_Muon_tight_eta_bin[i][j] = new TH1D("h_Muon_tight_eta_bin" + muonsuffix, "", netabin, etabins);
-	  h_Ele_loose_eta_bin [i][j] = new TH1D("h_Ele_loose_eta_bin"  + elesuffix,  "", netabin, etabins);
-	  h_Ele_tight_eta_bin [i][j] = new TH1D("h_Ele_tight_eta_bin"  + elesuffix,  "", netabin, etabins);
-	  
-	  
-	  // Effective luminosity estimation histograms
-	  //------------------------------------------------------------------------
-	  h_Muon_loose_m2l[i][j] = new TH1D("h_Muon_loose_m2l" + muonsuffix, "", 1000, 0, 200);
-	  h_Muon_tight_m2l[i][j] = new TH1D("h_Muon_tight_m2l" + muonsuffix, "", 1000, 0, 200);
-	  h_Ele_loose_m2l [i][j] = new TH1D("h_Ele_loose_m2l"  + elesuffix,  "", 1000, 0, 200);
-	  h_Ele_tight_m2l [i][j] = new TH1D("h_Ele_tight_m2l"  + elesuffix,  "", 1000, 0, 200);
-          
-	  h_Muon_loose_pt_m2l[i][j] = new TH2D("h_Muon_loose_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
-	  h_Muon_tight_pt_m2l[i][j] = new TH2D("h_Muon_tight_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
-	  h_Ele_loose_pt_m2l [i][j] = new TH2D("h_Ele_loose_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
-	  h_Ele_tight_pt_m2l [i][j] = new TH2D("h_Ele_tight_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
-	  
-	  
-	  // Yields histograms for getYields.C
-	  //------------------------------------------------------------------------
-	  h_Muon_loose_lowpt [i][j] = new TH1D("h_Muon_loose_lowpt"  + muonsuffix, "", nptbin, ptbins);
-	  h_Muon_loose_highpt[i][j] = new TH1D("h_Muon_loose_highpt" + muonsuffix, "", nptbin, ptbins);
-	  h_Muon_tight_lowpt [i][j] = new TH1D("h_Muon_tight_lowpt"  + muonsuffix, "", nptbin, ptbins);
-	  h_Muon_tight_highpt[i][j] = new TH1D("h_Muon_tight_highpt" + muonsuffix, "", nptbin, ptbins);
-	  
-	  h_Muon_loose_lowpt_weighted [i][j] = new TH1D("h_Muon_loose_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
-	  h_Muon_loose_highpt_weighted[i][j] = new TH1D("h_Muon_loose_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
-	  h_Muon_tight_lowpt_weighted [i][j] = new TH1D("h_Muon_tight_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
-	  h_Muon_tight_highpt_weighted[i][j] = new TH1D("h_Muon_tight_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
-	  
-	  h_Ele_loose_lowpt [i][j] = new TH1D("h_Ele_loose_lowpt"  + muonsuffix, "", nptbin, ptbins);
-	  h_Ele_loose_highpt[i][j] = new TH1D("h_Ele_loose_highpt" + muonsuffix, "", nptbin, ptbins);
-	  h_Ele_tight_lowpt [i][j] = new TH1D("h_Ele_tight_lowpt"  + muonsuffix, "", nptbin, ptbins);
-	  h_Ele_tight_highpt[i][j] = new TH1D("h_Ele_tight_highpt" + muonsuffix, "", nptbin, ptbins);
-	  
-	  h_Ele_loose_lowpt_weighted [i][j] = new TH1D("h_Ele_loose_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
-	  h_Ele_loose_highpt_weighted[i][j] = new TH1D("h_Ele_loose_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
-	  h_Ele_tight_lowpt_weighted [i][j] = new TH1D("h_Ele_tight_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
-	  h_Ele_tight_highpt_weighted[i][j] = new TH1D("h_Ele_tight_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
-	}
-      }
+      TString directory = scutFR[i];
       
-
-      // PR regions
-      //----------------------------------------------------------------------------
-      for (int i=0; i<ncutPR; i++) {
-	
-	TString directory = scutPR[i];
-	
-	root_output->cd();
-	root_output->cd(btagDirectory);
-	gDirectory->mkdir(directory);
-	root_output->cd(btagDirectory+"/"+directory);
-	
-	
-	// Prompt rate histograms
-	//--------------------------------------------------------------------------
-	h_Muon_loose_pt_eta_PR[i] = new TH2D("h_Muon_loose_pt_eta_PR", "", nptbin, ptbins, netabin, etabins);
-	h_Muon_tight_pt_eta_PR[i] = new TH2D("h_Muon_tight_pt_eta_PR", "", nptbin, ptbins, netabin, etabins);
-	h_Ele_loose_pt_eta_PR[i]  = new TH2D("h_Ele_loose_pt_eta_PR",  "", nptbin, ptbins, netabin, etabins);
-	h_Ele_tight_pt_eta_PR[i]  = new TH2D("h_Ele_tight_pt_eta_PR",  "", nptbin, ptbins, netabin, etabins);
-	
-	h_Muon_loose_pt_PR[i] = new TH1D("h_Muon_loose_pt_PR", "", nptbin, ptbins);
-	h_Muon_tight_pt_PR[i] = new TH1D("h_Muon_tight_pt_PR", "", nptbin, ptbins);
-	h_Ele_loose_pt_PR[i]  = new TH1D("h_Ele_loose_pt_PR",  "", nptbin, ptbins);
-	h_Ele_tight_pt_PR[i]  = new TH1D("h_Ele_tight_pt_PR",  "", nptbin, ptbins);
-	
-	h_Muon_loose_eta_PR[i] = new TH1D("h_Muon_loose_eta_PR", "", netabin, etabins);
-	h_Muon_tight_eta_PR[i] = new TH1D("h_Muon_tight_eta_PR", "", netabin, etabins);
-	h_Ele_loose_eta_PR[i]  = new TH1D("h_Ele_loose_eta_PR",  "", netabin, etabins);
-	h_Ele_tight_eta_PR[i]  = new TH1D("h_Ele_tight_eta_PR",  "", netabin, etabins);
-      }
+      root_output->cd();
+      root_output->cd(btagDirectory);
+      gDirectory->mkdir(directory);
+      root_output->cd(btagDirectory+"/"+directory);
       
+      for (int j=0; j<njetet; j++) {
+	
+	TString muonsuffix = Form("_%.0fGeV", muonjetet[j]);
+	TString elesuffix  = Form("_%.0fGeV", elejetet[j]);
+	
+	// Fake rate histograms
+	//------------------------------------------------------------------------
+	h_Muon_loose_pt_eta_bin[i][j][btag] = new TH2D("h_Muon_loose_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
+	h_Muon_tight_pt_eta_bin[i][j][btag] = new TH2D("h_Muon_tight_pt_eta_bin" + muonsuffix, "", nptbin, ptbins, netabin, etabins);
+	h_Ele_loose_pt_eta_bin [i][j][btag] = new TH2D("h_Ele_loose_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
+	h_Ele_tight_pt_eta_bin [i][j][btag] = new TH2D("h_Ele_tight_pt_eta_bin"  + elesuffix,  "", nptbin, ptbins, netabin, etabins);
+	
+	h_Muon_loose_pt_bin[i][j][btag] = new TH1D("h_Muon_loose_pt_bin" + muonsuffix, "", nptbin, ptbins);
+	h_Muon_tight_pt_bin[i][j][btag] = new TH1D("h_Muon_tight_pt_bin" + muonsuffix, "", nptbin, ptbins);
+	h_Ele_loose_pt_bin [i][j][btag] = new TH1D("h_Ele_loose_pt_bin"  + elesuffix,  "", nptbin, ptbins);
+	h_Ele_tight_pt_bin [i][j][btag] = new TH1D("h_Ele_tight_pt_bin"  + elesuffix,  "", nptbin, ptbins);
+	
+	h_Muon_loose_eta_bin[i][j][btag] = new TH1D("h_Muon_loose_eta_bin" + muonsuffix, "", netabin, etabins);
+	h_Muon_tight_eta_bin[i][j][btag] = new TH1D("h_Muon_tight_eta_bin" + muonsuffix, "", netabin, etabins);
+	h_Ele_loose_eta_bin [i][j][btag] = new TH1D("h_Ele_loose_eta_bin"  + elesuffix,  "", netabin, etabins);
+	h_Ele_tight_eta_bin [i][j][btag] = new TH1D("h_Ele_tight_eta_bin"  + elesuffix,  "", netabin, etabins);
+
+	// Effective luminosity estimation histograms
+	//------------------------------------------------------------------------
+	h_Muon_loose_m2l[i][j][btag] = new TH1D("h_Muon_loose_m2l" + muonsuffix, "", 1000, 0, 200);
+	h_Muon_tight_m2l[i][j][btag] = new TH1D("h_Muon_tight_m2l" + muonsuffix, "", 1000, 0, 200);
+	h_Ele_loose_m2l [i][j][btag] = new TH1D("h_Ele_loose_m2l"  + elesuffix,  "", 1000, 0, 200);
+	h_Ele_tight_m2l [i][j][btag] = new TH1D("h_Ele_tight_m2l"  + elesuffix,  "", 1000, 0, 200);
+      
+	h_Muon_loose_pt_m2l[i][j][btag] = new TH2D("h_Muon_loose_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+	h_Muon_tight_pt_m2l[i][j][btag] = new TH2D("h_Muon_tight_pt_m2l" + muonsuffix, "", 200, 0, 200, nptbin, ptbins);
+	h_Ele_loose_pt_m2l [i][j][btag] = new TH2D("h_Ele_loose_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+	h_Ele_tight_pt_m2l [i][j][btag] = new TH2D("h_Ele_tight_pt_m2l"  + elesuffix,  "", 200, 0, 200, nptbin, ptbins);
+
+
+	// Yields histograms for getYields.C
+	//------------------------------------------------------------------------
+	h_Muon_loose_lowpt [i][j][btag] = new TH1D("h_Muon_loose_lowpt"  + muonsuffix, "", nptbin, ptbins);
+	h_Muon_loose_highpt[i][j][btag] = new TH1D("h_Muon_loose_highpt" + muonsuffix, "", nptbin, ptbins);
+	h_Muon_tight_lowpt [i][j][btag] = new TH1D("h_Muon_tight_lowpt"  + muonsuffix, "", nptbin, ptbins);
+	h_Muon_tight_highpt[i][j][btag] = new TH1D("h_Muon_tight_highpt" + muonsuffix, "", nptbin, ptbins);
+	
+	h_Muon_loose_lowpt_weighted [i][j][btag] = new TH1D("h_Muon_loose_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
+	h_Muon_loose_highpt_weighted[i][j][btag] = new TH1D("h_Muon_loose_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+	h_Muon_tight_lowpt_weighted [i][j][btag] = new TH1D("h_Muon_tight_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
+	h_Muon_tight_highpt_weighted[i][j][btag] = new TH1D("h_Muon_tight_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+	
+	h_Ele_loose_lowpt [i][j][btag] = new TH1D("h_Ele_loose_lowpt"  + muonsuffix, "", nptbin, ptbins);
+	h_Ele_loose_highpt[i][j][btag] = new TH1D("h_Ele_loose_highpt" + muonsuffix, "", nptbin, ptbins);
+	h_Ele_tight_lowpt [i][j][btag] = new TH1D("h_Ele_tight_lowpt"  + muonsuffix, "", nptbin, ptbins);
+	h_Ele_tight_highpt[i][j][btag] = new TH1D("h_Ele_tight_highpt" + muonsuffix, "", nptbin, ptbins);
+	
+	h_Ele_loose_lowpt_weighted [i][j][btag] = new TH1D("h_Ele_loose_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
+	h_Ele_loose_highpt_weighted[i][j][btag] = new TH1D("h_Ele_loose_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+	h_Ele_tight_lowpt_weighted [i][j][btag] = new TH1D("h_Ele_tight_lowpt_weighted"  + muonsuffix, "", nptbin, ptbins);
+	h_Ele_tight_highpt_weighted[i][j][btag] = new TH1D("h_Ele_tight_highpt_weighted" + muonsuffix, "", nptbin, ptbins);
+	
+      }	
+    }
   }
+    
+  // PR regions
+  //----------------------------------------------------------------------------
+  for (int i=0; i<ncutPR; i++) {
+    
+    TString directory = scutPR[i];
+    
+    root_output->cd();
+    gDirectory->mkdir(directory);
+    root_output->cd(directory);
+    
+    // Prompt rate histograms
+    //--------------------------------------------------------------------------
+    h_Muon_loose_pt_eta_PR[i] = new TH2D("h_Muon_loose_pt_eta_PR", "", nptbin, ptbins, netabin, etabins);
+    h_Muon_tight_pt_eta_PR[i] = new TH2D("h_Muon_tight_pt_eta_PR", "", nptbin, ptbins, netabin, etabins);
+    h_Ele_loose_pt_eta_PR[i]  = new TH2D("h_Ele_loose_pt_eta_PR",  "", nptbin, ptbins, netabin, etabins);
+    h_Ele_tight_pt_eta_PR[i]  = new TH2D("h_Ele_tight_pt_eta_PR",  "", nptbin, ptbins, netabin, etabins);
+    
+    h_Muon_loose_pt_PR[i] = new TH1D("h_Muon_loose_pt_PR", "", nptbin, ptbins);
+    h_Muon_tight_pt_PR[i] = new TH1D("h_Muon_tight_pt_PR", "", nptbin, ptbins);
+    h_Ele_loose_pt_PR[i]  = new TH1D("h_Ele_loose_pt_PR",  "", nptbin, ptbins);
+    h_Ele_tight_pt_PR[i]  = new TH1D("h_Ele_tight_pt_PR",  "", nptbin, ptbins);
+    
+    h_Muon_loose_eta_PR[i] = new TH1D("h_Muon_loose_eta_PR", "", netabin, etabins);
+    h_Muon_tight_eta_PR[i] = new TH1D("h_Muon_tight_eta_PR", "", netabin, etabins);
+    h_Ele_loose_eta_PR[i]  = new TH1D("h_Ele_loose_eta_PR",  "", netabin, etabins);
+    h_Ele_tight_eta_PR[i]  = new TH1D("h_Ele_tight_eta_PR",  "", netabin, etabins);
+  }
+  
 }
-
 
 //------------------------------------------------------------------------------
 // SlaveBegin
@@ -351,7 +347,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
       
       (Lepton_pt[0] <= 25.) ? event_weight *= eleLowPtPrescale : event_weight *= eleHighPtPrescale;  // Luminosity in fb-1 from brilcalc
       
-      if (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+      if (Lepton_pt[0] <= 25. && *HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
 	
 	passTrigger = true;
 	
@@ -377,7 +373,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
 
     if ((filename.Contains("SingleEle") or filename.Contains("DoubleEG")) && channel == e) {
       
-      if (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+      if (Lepton_pt[0] <= 25. && *HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
 	
 	passTrigger = true;
 	
@@ -448,24 +444,24 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	
 	if (fabs(Zdecayflavour) == 11) {
 	  
-	  h_Ele_loose_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight);
-	  h_Ele_loose_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight);
+	  h_Ele_loose_m2l   [FR_01_Zpeak][i][0]->Fill(m2l, event_weight);
+	  h_Ele_loose_pt_m2l[FR_01_Zpeak][i][0]->Fill(m2l, tlv1.Pt(), event_weight);
 	  
 	  if (Zlepton1type == Tight && Zlepton2type == Tight) {
 	    
-	    h_Ele_tight_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight * l2tight_weight);
-	    h_Ele_tight_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	    h_Ele_tight_m2l   [FR_01_Zpeak][i][0]->Fill(m2l, event_weight * l2tight_weight);
+	    h_Ele_tight_pt_m2l[FR_01_Zpeak][i][0]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
 	  }
 	}
 	else if (fabs(Zdecayflavour) == 13) {
 	  
-	  h_Muon_loose_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight);
-	  h_Muon_loose_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight);
+	  h_Muon_loose_m2l   [FR_01_Zpeak][i][0]->Fill(m2l, event_weight);
+	  h_Muon_loose_pt_m2l[FR_01_Zpeak][i][0]->Fill(m2l, tlv1.Pt(), event_weight);
 	  
 	  if (Zlepton1type == Tight && Zlepton2type == Tight) {
 	    
-	    h_Muon_tight_m2l   [FR_01_Zpeak][i]->Fill(m2l, event_weight * l2tight_weight);
-	    h_Muon_tight_pt_m2l[FR_01_Zpeak][i]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
+	    h_Muon_tight_m2l   [FR_01_Zpeak][i][0]->Fill(m2l, event_weight * l2tight_weight);
+	    h_Muon_tight_pt_m2l[FR_01_Zpeak][i][0]->Fill(m2l, tlv1.Pt(), event_weight * l2tight_weight);
 	  }
 	}
       }
@@ -536,19 +532,37 @@ void nanoFakes::Terminate()
 
   printf("\n Writing histograms. This can take a while...\n\n");
 
+  printf(" =========== NON-WEIGHTED ========== \n");
   printf(" ============== MUONS ============== \n"); 
-  printf(" Number of low  pt loose muons: %.0f \n", h_Muon_loose_lowpt [FR_00_QCD][3]->Integral());
-  printf(" Number of high pt loose muons: %.0f \n", h_Muon_loose_highpt[FR_00_QCD][3]->Integral());
-  printf(" Number of low  pt tight muons: %.0f \n", h_Muon_tight_lowpt [FR_00_QCD][3]->Integral());
-  printf(" Number of high pt tight muons: %.0f \n", h_Muon_tight_highpt[FR_00_QCD][3]->Integral());
+  printf(" Number of low  pt loose muons: %.0f \n", h_Muon_loose_lowpt [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt loose muons: %.0f \n", h_Muon_loose_highpt[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt tight muons: %.0f \n", h_Muon_tight_lowpt [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt tight muons: %.0f \n", h_Muon_tight_highpt[FR_00_QCD][3][0]->Integral());
 
   printf("\n");
 
   printf(" ============== ELECTRONS ============== \n"); 
-  printf(" Number of low  pt loose electrons: %.0f \n", h_Ele_loose_lowpt [FR_00_QCD][3]->Integral());
-  printf(" Number of high pt loose electrons: %.0f \n", h_Ele_loose_highpt[FR_00_QCD][3]->Integral());
-  printf(" Number of low  pt tight electrons: %.0f \n", h_Ele_tight_lowpt [FR_00_QCD][3]->Integral());
-  printf(" Number of high pt tight electrons: %.0f \n", h_Ele_tight_highpt[FR_00_QCD][3]->Integral());
+  printf(" Number of low  pt loose electrons: %.0f \n", h_Ele_loose_lowpt [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt loose electrons: %.0f \n", h_Ele_loose_highpt[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt tight electrons: %.0f \n", h_Ele_tight_lowpt [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt tight electrons: %.0f \n", h_Ele_tight_highpt[FR_00_QCD][3][0]->Integral());
+
+  printf("\n");  printf("\n");
+
+  printf(" ============= WEIGHTED ============ \n");
+  printf(" ============== MUONS ============== \n"); 
+  printf(" Number of low  pt loose muons: %.0f \n", h_Muon_loose_lowpt_weighted [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt loose muons: %.0f \n", h_Muon_loose_highpt_weighted[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt tight muons: %.0f \n", h_Muon_tight_lowpt_weighted [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt tight muons: %.0f \n", h_Muon_tight_highpt_weighted[FR_00_QCD][3][0]->Integral());
+
+  printf("\n");
+
+  printf(" ============== ELECTRONS ============== \n"); 
+  printf(" Number of low  pt loose electrons: %.0f \n", h_Ele_loose_lowpt_weighted [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt loose electrons: %.0f \n", h_Ele_loose_highpt_weighted[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt tight electrons: %.0f \n", h_Ele_tight_lowpt_weighted [FR_00_QCD][3][0]->Integral());
+  printf(" Number of high pt tight electrons: %.0f \n", h_Ele_tight_highpt_weighted[FR_00_QCD][3][0]->Integral());
 
   printf("\n");
 
@@ -576,8 +590,8 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
   float lep1eta = fabs(Lepton_eta[0]);
   
   for (int btag = 0; btag < nbtag ; btag ++) {
- 
-    btagDirectory = btags[btag];
+
+    btagDirectory = btags[btag]; 
     if(btagDirectory == "") {
       btagDown = 0.0;
       btagUp = 1.0;
@@ -592,28 +606,23 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       btagUp = 1.0;
     }
 
-    root_output->cd();
-    root_output->cd(btagDirectory);
-
     if (channel == m && Jet_btagDeepB[Muon_jetIdx[Lepton_muonIdx[0]]] > btagDown && Jet_btagDeepB[Muon_jetIdx[Lepton_muonIdx[0]]] < btagUp) {
       
-      //printf("bTagUp: %d", btagUp);
-
       // Loose muons
       //--------------------------------------------------------------------------
-      h_Muon_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-      h_Muon_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
-      h_Muon_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
+      h_Muon_loose_pt_eta_bin[icut][i][btag]->Fill(Lepton_pt[0], lep1eta, event_weight);
+      h_Muon_loose_pt_bin    [icut][i][btag]->Fill(Lepton_pt[0],  event_weight);
+      h_Muon_loose_eta_bin   [icut][i][btag]->Fill(lep1eta, event_weight);
       
       if (Lepton_pt[0] <= 20.)
 	{
-	  h_Muon_loose_lowpt         [icut][i]->Fill(Lepton_pt[0]);
-	  h_Muon_loose_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	  h_Muon_loose_lowpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	  h_Muon_loose_lowpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	}
       else
 	{
-	  h_Muon_loose_highpt         [icut][i]->Fill(Lepton_pt[0]);
-	  h_Muon_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	  h_Muon_loose_highpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	  h_Muon_loose_highpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	}
       
       
@@ -621,19 +630,19 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       //--------------------------------------------------------------------------
       if (muonTightWP[0] > 0.5) {
 	
-	h_Muon_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-	h_Muon_tight_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
-	h_Muon_tight_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
+	h_Muon_tight_pt_eta_bin[icut][i][btag]->Fill(Lepton_pt[0], lep1eta, event_weight);
+	h_Muon_tight_pt_bin    [icut][i][btag]->Fill(Lepton_pt[0],  event_weight);
+	h_Muon_tight_eta_bin   [icut][i][btag]->Fill(lep1eta, event_weight);
 	
 	if (Lepton_pt[0] <= 20.)
 	  {
-	    h_Muon_tight_lowpt         [icut][i]->Fill(Lepton_pt[0]);
-	    h_Muon_tight_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	    h_Muon_tight_lowpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	    h_Muon_tight_lowpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	  }
 	else
 	  {
-	    h_Muon_tight_highpt         [icut][i]->Fill(Lepton_pt[0]);
-	    h_Muon_tight_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	    h_Muon_tight_highpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	    h_Muon_tight_highpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	  }
       }
       
@@ -642,19 +651,19 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       
       // Loose electrons
       //--------------------------------------------------------------------------
-      h_Ele_loose_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-      h_Ele_loose_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
-      h_Ele_loose_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
+      h_Ele_loose_pt_eta_bin[icut][i][btag]->Fill(Lepton_pt[0], lep1eta, event_weight);
+      h_Ele_loose_pt_bin    [icut][i][btag]->Fill(Lepton_pt[0],  event_weight);
+      h_Ele_loose_eta_bin   [icut][i][btag]->Fill(lep1eta, event_weight);
       
       if (Lepton_pt[0] <= 25.)
 	{
-	  h_Ele_loose_lowpt         [icut][i]->Fill(Lepton_pt[0]);
-	  h_Ele_loose_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	  h_Ele_loose_lowpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	  h_Ele_loose_lowpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	}
       else
 	{
-	  h_Ele_loose_highpt         [icut][i]->Fill(Lepton_pt[0]);
-	  h_Ele_loose_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	  h_Ele_loose_highpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	  h_Ele_loose_highpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	}
       
       
@@ -662,19 +671,19 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
       //--------------------------------------------------------------------------
       if (eleTightWP[0] > 0.5) {
 	
-	h_Ele_tight_pt_eta_bin[icut][i]->Fill(Lepton_pt[0], lep1eta, event_weight);
-	h_Ele_tight_pt_bin    [icut][i]->Fill(Lepton_pt[0],  event_weight);
-	h_Ele_tight_eta_bin   [icut][i]->Fill(lep1eta, event_weight);
+	h_Ele_tight_pt_eta_bin[icut][i][btag]->Fill(Lepton_pt[0], lep1eta, event_weight);
+	h_Ele_tight_pt_bin    [icut][i][btag]->Fill(Lepton_pt[0],  event_weight);
+	h_Ele_tight_eta_bin   [icut][i][btag]->Fill(lep1eta, event_weight);
 	
 	if(Lepton_pt[0] <= 25.)
 	  {
-	    h_Ele_tight_lowpt         [icut][i]->Fill(Lepton_pt[0]);
-	    h_Ele_tight_lowpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	    h_Ele_tight_lowpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	    h_Ele_tight_lowpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	  }
 	else
 	  {
-	    h_Ele_tight_highpt         [icut][i]->Fill(Lepton_pt[0]);
-	    h_Ele_tight_highpt_weighted[icut][i]->Fill(Lepton_pt[0], event_weight);
+	    h_Ele_tight_highpt         [icut][i][btag]->Fill(Lepton_pt[0]);
+	    h_Ele_tight_highpt_weighted[icut][i][btag]->Fill(Lepton_pt[0], event_weight);
 	  }
       }
       

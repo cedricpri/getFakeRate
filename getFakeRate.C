@@ -4,7 +4,8 @@ const Int_t   njetet = 7;
 
 const Float_t muojetarray[njetet] = {10, 15, 20, 25, 30, 35, 45};
 const Float_t elejetarray[njetet] = {10, 15, 20, 25, 30, 35, 45};
-const Float_t colors     [njetet] = {kRed-6, kRed-5, kRed-4, kRed-3, kRed-2, kRed-1, kRed};
+const Float_t colors     [njetet] = {kRed, kRed+1, kRed+2, kRed+3, kRed+4, kRed+5, kRed+6};
+//const Float_t colors     [njetet] = {kRed-6, kRed-5, kRed-4, kRed-3, kRed-2, kRed-1, kRed};
 
 const Float_t muoscale = -1.;
 const Float_t elescale = -1.;
@@ -25,7 +26,7 @@ TFile*  zjetsPR;
 
 TString inputdir;
 TString outputdir;
-
+TString btagDirectory = "";
 
 // Functions
 //------------------------------------------------------------------------------
@@ -163,15 +164,14 @@ void DrawAllJetEt(TString flavour,
 
     TString suffix = Form("%s_bin_%.0fGeV", variable.Data(), jetet);
 
-
     // Read loose and tight histograms
     //--------------------------------------------------------------------------
-    TH1D* h_loose_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-    TH1D* h_loose_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-    TH1D* h_loose_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-    TH1D* h_tight_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
-    TH1D* h_tight_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
-    TH1D* h_tight_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+    TH1D* h_loose_data  = (TH1D*)dataFR ->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+    TH1D* h_loose_zjets = (TH1D*)zjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+    TH1D* h_loose_wjets = (TH1D*)wjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+    TH1D* h_tight_data  = (TH1D*)dataFR ->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+    TH1D* h_tight_zjets = (TH1D*)zjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+    TH1D* h_tight_wjets = (TH1D*)wjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
 
 
     // Prepare fake rate histograms
@@ -216,12 +216,12 @@ void DrawFR(TString flavour,
 
   // Read loose and tight histograms
   //----------------------------------------------------------------------------
-  TH1D* h_loose_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-  TH1D* h_loose_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-  TH1D* h_loose_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-  TH1D* h_tight_data  = (TH1D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
-  TH1D* h_tight_zjets = (TH1D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
-  TH1D* h_tight_wjets = (TH1D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH1D* h_loose_data  = (TH1D*)dataFR ->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH1D* h_loose_zjets = (TH1D*)zjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH1D* h_loose_wjets = (TH1D*)wjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH1D* h_tight_data  = (TH1D*)dataFR ->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH1D* h_tight_zjets = (TH1D*)zjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH1D* h_tight_wjets = (TH1D*)wjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
 
 
   // Make EWK correction histograms
@@ -356,12 +356,12 @@ void WriteFR(TString flavour,
   
   // Read loose and tight histograms
   //----------------------------------------------------------------------------
-  TH2D* h_loose_data  = (TH2D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-  TH2D* h_loose_zjets = (TH2D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-  TH2D* h_loose_wjets = (TH2D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_loose_" + suffix);
-  TH2D* h_tight_data  = (TH2D*)dataFR ->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
-  TH2D* h_tight_zjets = (TH2D*)zjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
-  TH2D* h_tight_wjets = (TH2D*)wjetsFR->Get("FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH2D* h_loose_data  = (TH2D*)dataFR ->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH2D* h_loose_zjets = (TH2D*)zjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH2D* h_loose_wjets = (TH2D*)wjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_loose_" + suffix);
+  TH2D* h_tight_data  = (TH2D*)dataFR ->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH2D* h_tight_zjets = (TH2D*)zjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
+  TH2D* h_tight_wjets = (TH2D*)wjetsFR->Get(btagDirectory+"FR/00_QCD/h_" + flavour + "_tight_" + suffix);
 
 
   // Prepare fake rate histograms
