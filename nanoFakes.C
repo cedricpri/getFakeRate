@@ -36,6 +36,9 @@ int            counter    = 0;
 int            nentries   = 0;
 int            maxentries = -1;
 
+int            counter1 = 0;
+int            counter2 = 0;
+
 //------------------------------------------------------------------------------
 // Begin
 //------------------------------------------------------------------------------
@@ -46,7 +49,6 @@ void nanoFakes::Begin(TTree*)
   // The tree argument is deprecated (on PROOF 0 is passed).
 
   option = GetOption();
-
   printf("\n");
 
   printf("   option: %s\n", option.c_str());
@@ -80,7 +82,8 @@ void nanoFakes::Begin(TTree*)
     muonLowPtPrescale = 7.801;
     muonHighPtPrescale = 216.748;
   } else if(year == "2017") {
-    eleLowPtPrescale = 27.699;
+    eleLowPtPrescale = 3.973; //Ele8
+    //eleLowPtPrescale = 27.699; //Ele12
     eleHighPtPrescale = 43.469;
     muonLowPtPrescale = 2.903;
     muonHighPtPrescale = 65.944;
@@ -347,7 +350,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
       
       (Lepton_pt[0] <= 25.) ? event_weight *= eleLowPtPrescale : event_weight *= eleHighPtPrescale;  // Luminosity in fb-1 from brilcalc
       
-      if (Lepton_pt[0] <= 25. && *HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+      if (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
 	
 	passTrigger = true;
 	
@@ -371,9 +374,9 @@ Bool_t nanoFakes::Process(Long64_t entry)
       }
     }
 
-    if ((filename.Contains("SingleEle") or filename.Contains("DoubleEG")) && channel == e) {
+    if ((filename.Contains("SingleEle") or filename.Contains("DoubleEG") or filename.Contains("EGamma")) && channel == e) {
       
-      if (Lepton_pt[0] <= 25. && *HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
+      if (Lepton_pt[0] <= 25. && *HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 > 0.5) {
 	
 	passTrigger = true;
 	
@@ -403,7 +406,8 @@ Bool_t nanoFakes::Process(Long64_t entry)
       
 	if (CleanJet_pt[j] < 10.) continue;
 	if (abs(CleanJet_eta[j]) > 2.5) continue;
-	
+	if (CleanJet_pt[j] < inputJetEt) continue;
+
 	TLorentzVector tlvJet;
 	
 	tlvJet.SetPtEtaPhiM(CleanJet_pt[j], CleanJet_eta[j], CleanJet_phi[j], 0);
@@ -418,7 +422,7 @@ Bool_t nanoFakes::Process(Long64_t entry)
 	}	
       }
 
-      bool passJets = (jetIndex != -1 && CleanJet_pt[jetIndex] >= inputJetEt);
+      bool passJets = (jetIndex != -1);
 
 
       // QCD region
@@ -534,37 +538,40 @@ void nanoFakes::Terminate()
 
   printf(" =========== NON-WEIGHTED ========== \n");
   printf(" ============== MUONS ============== \n"); 
-  printf(" Number of low  pt loose muons: %.0f \n", h_Muon_loose_lowpt [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt loose muons: %.0f \n", h_Muon_loose_highpt[FR_00_QCD][3][0]->Integral());
-  printf(" Number of low  pt tight muons: %.0f \n", h_Muon_tight_lowpt [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt tight muons: %.0f \n", h_Muon_tight_highpt[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt loose muons: %.0f \n", h_Muon_loose_lowpt [FR_00_QCD][3][0]->Integral(-1, -1));
+  printf(" Number of high pt loose muons: %.0f \n", h_Muon_loose_highpt[FR_00_QCD][3][0]->Integral(-1, -1));
+  printf(" Number of low  pt tight muons: %.0f \n", h_Muon_tight_lowpt [FR_00_QCD][3][0]->Integral(-1, -1));
+  printf(" Number of high pt tight muons: %.0f \n", h_Muon_tight_highpt[FR_00_QCD][3][0]->Integral(-1, -1));
 
   printf("\n");
 
   printf(" ============== ELECTRONS ============== \n"); 
-  printf(" Number of low  pt loose electrons: %.0f \n", h_Ele_loose_lowpt [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt loose electrons: %.0f \n", h_Ele_loose_highpt[FR_00_QCD][3][0]->Integral());
-  printf(" Number of low  pt tight electrons: %.0f \n", h_Ele_tight_lowpt [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt tight electrons: %.0f \n", h_Ele_tight_highpt[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt loose electrons: %.0f \n", h_Ele_loose_lowpt [FR_00_QCD][5][0]->Integral(-1, -1));
+  printf(" Number of high pt loose electrons: %.0f \n", h_Ele_loose_highpt[FR_00_QCD][5][0]->Integral(-1, -1));
+  printf(" Number of low  pt tight electrons: %.0f \n", h_Ele_tight_lowpt [FR_00_QCD][5][0]->Integral(-1, -1));
+  printf(" Number of high pt tight electrons: %.0f \n", h_Ele_tight_highpt[FR_00_QCD][5][0]->Integral(-1, -1));
 
   printf("\n");  printf("\n");
 
   printf(" ============= WEIGHTED ============ \n");
   printf(" ============== MUONS ============== \n"); 
-  printf(" Number of low  pt loose muons: %.0f \n", h_Muon_loose_lowpt_weighted [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt loose muons: %.0f \n", h_Muon_loose_highpt_weighted[FR_00_QCD][3][0]->Integral());
-  printf(" Number of low  pt tight muons: %.0f \n", h_Muon_tight_lowpt_weighted [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt tight muons: %.0f \n", h_Muon_tight_highpt_weighted[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt loose muons: %.0f \n", h_Muon_loose_lowpt_weighted [FR_00_QCD][3][0]->Integral(-1, -1));
+  printf(" Number of high pt loose muons: %.0f \n", h_Muon_loose_highpt_weighted[FR_00_QCD][3][0]->Integral(-1, -1));
+  printf(" Number of low  pt tight muons: %.0f \n", h_Muon_tight_lowpt_weighted [FR_00_QCD][3][0]->Integral(-1, -1));
+  printf(" Number of high pt tight muons: %.0f \n", h_Muon_tight_highpt_weighted[FR_00_QCD][3][0]->Integral(-1, -1));
 
   printf("\n");
 
   printf(" ============== ELECTRONS ============== \n"); 
-  printf(" Number of low  pt loose electrons: %.0f \n", h_Ele_loose_lowpt_weighted [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt loose electrons: %.0f \n", h_Ele_loose_highpt_weighted[FR_00_QCD][3][0]->Integral());
-  printf(" Number of low  pt tight electrons: %.0f \n", h_Ele_tight_lowpt_weighted [FR_00_QCD][3][0]->Integral());
-  printf(" Number of high pt tight electrons: %.0f \n", h_Ele_tight_highpt_weighted[FR_00_QCD][3][0]->Integral());
+  printf(" Number of low  pt loose electrons: %.0f \n", h_Ele_loose_lowpt_weighted [FR_00_QCD][5][0]->Integral(-1, -1));
+  printf(" Number of high pt loose electrons: %.0f \n", h_Ele_loose_highpt_weighted[FR_00_QCD][5][0]->Integral(-1, -1));
+  printf(" Number of low  pt tight electrons: %.0f \n", h_Ele_tight_lowpt_weighted [FR_00_QCD][5][0]->Integral(-1, -1));
+  printf(" Number of high pt tight electrons: %.0f \n", h_Ele_tight_highpt_weighted[FR_00_QCD][5][0]->Integral(-1, -1));
 
   printf("\n");
+
+  printf("Counter 1: %d \n", counter1);
+  printf("Counter 2: %d \n", counter2);
 
   root_output->Write("", TObject::kOverwrite);
   root_output->Close();
@@ -593,17 +600,17 @@ void nanoFakes::FillAnalysisHistograms(int icut, int i)
 
     btagDirectory = btags[btag]; 
     if(btagDirectory == "") {
-      btagDown = 0.0;
-      btagUp = 1.0;
+      btagDown = -10.0;
+      btagUp = 10.0;
     } else if(btagDirectory == "bveto") {
-      btagDown = 0.0;
+      btagDown = -10.0;
       btagUp = 0.1522;
     } else if(btagDirectory == "loose") {
       btagDown = 0.1522;
       btagUp = 0.4941;
     } else if(btagDirectory == "mediumtight") {
       btagDown = 0.4941;
-      btagUp = 1.0;
+      btagUp = 10.0;
     }
 
     if (channel == m && Jet_btagDeepB[Muon_jetIdx[Lepton_muonIdx[0]]] > btagDown && Jet_btagDeepB[Muon_jetIdx[Lepton_muonIdx[0]]] < btagUp) {

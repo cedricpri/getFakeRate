@@ -223,23 +223,22 @@ class nanoFakes : public TSelector
    //---------------------------------------------------------------------------
 
    // 2016
-   /*TTreeReaderArray<Bool_t> Lepton_isTightMuon_cut_Tight80x;
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X;
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X_SS;
-   TTreeReaderArray<Bool_t> Lepton_isTightElectron_mva_90p_Iso2016;
+   TTreeReaderArray<Int_t> muonTightWP = {fReader, "Lepton_isTightMuon_cut_Tight80x"};
+   TTreeReaderArray<Int_t> eleTightWP = {fReader, "Lepton_isTightElectron_cut_WP_Tight80X"};
+   //TTreeReaderArray<Bool_t> Lepton_isTightElectron_cut_WP_Tight80X_SS;
+   //TTreeReaderArray<Bool_t> Lepton_isTightElectron_mva_90p_Iso2016;
 
    // 2017
    //TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight_HWWW = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
-   TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight_HWWW;
+   //TTreeReaderArray<Int_t> Lepton_isTightMuon_cut_Tight_HWWW;
    //TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP90 = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP90"};
-   TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP90;*/
+   //TTreeReaderArray<Int_t> Lepton_isTightElectron_mvaFall17Iso_WP90;
+   //TTreeReaderArray<Int_t> muonTightWP = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
+   //TTreeReaderArray<Int_t> eleTightWP = {fReader, "Lepton_isTightElectron_mvaFall17Iso_WP90"};
 
    // 2018
-   //Lepton_isTightMuon_cut_Tight_HWWW
-   //Lepton_isTightElectron_mvaFall17V1Iso_WP90
-
-   TTreeReaderArray<Int_t> muonTightWP = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
-   TTreeReaderArray<Int_t> eleTightWP = {fReader, "Lepton_isTightElectron_mvaFall17V1Iso_WP90"};
+   //TTreeReaderArray<Int_t> muonTightWP = {fReader, "Lepton_isTightMuon_cut_Tight_HWWW"};
+   //TTreeReaderArray<Int_t> eleTightWP = {fReader, "Lepton_isTightElectron_mvaFall17V1Iso_WP90"};
 
    nanoFakes(TTree * /*tree*/ =0) { }
    virtual ~nanoFakes() { }

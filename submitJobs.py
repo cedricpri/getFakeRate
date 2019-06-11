@@ -76,15 +76,16 @@ def submit():
     for sample in samples:
 
         if year == "2016":
-            if ("DYJetsToLL_M-50" in sample) or ("WJetsToLNu__" in sample) or ("DoubleMuon" in sample) or ("DoubleEG" in sample): 
+            if("DYJetsToLL_M-50_ext2__" in sample)or ("DYJetsToLL_M-10to50-LO_" in sample) or ("WJetsToLNu__" in sample) or ("DoubleMuon" in sample) or ("DoubleEG" in sample): 
                 jobs.append(sample)
 
         elif year == "2017":
-            if ("DYJetsToLL_M-50__" in sample and "HT" not in sample) or ("DYJetsToLL_M-10to50-LO__" in sample) or ("WJetsToLNu-LO__" in sample) or ("DoubleMuon" in sample) or ("SingleElectron" in sample):
+            if ("DYJetsToLL_M-10to50-LO_" in sample) or ("DYJetsToLL_M-50__" in sample) or ("WJetsToLNu-LO__" in sample) or ("DoubleMuon" in sample) or ("SingleElectron" in sample):
+            #if "GJets" in sample:
                 jobs.append(sample)
 
         elif year == "2018":
-            if ("DYJetsToLL_M-50" in sample) or ("WJetsToLNu" in sample) or ("DoubleMuon" in sample) or ("DoubleEG" in sample):
+            if ("DYJetsToLL_M-10to50-LO_" in sample) or ("DYJetsToLL_M-50-LO__" in sample) or ("WJetsToLNu-LO__" in sample) or ("DoubleMuon" in sample) or ("DoubleEG" in sample):
                 jobs.append(sample)
 
     if len(jobs) == 0:
